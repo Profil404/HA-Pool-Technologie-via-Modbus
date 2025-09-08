@@ -10,7 +10,7 @@ class ModbusHandler:
     def read_register(self, address, count=1):
         try:
             self.client.connect()
-            result = self.client.read_holding_registers(address=address, count=count, slave=self.unit_id)
+            result = self.client.read_holding_registers(address=address, count=count, device_id=self.unit_id)
             if result.isError():
                 return None
             return result.registers
@@ -22,7 +22,7 @@ class ModbusHandler:
     def write_register(self, address, value):
         try:
             self.client.connect()
-            result = self.client.write_register(address=address, value=value, slave=self.unit_id)
+            result = self.client.write_register(address=address, value=value, device_id=self.unit_id)
             return not result.isError()
         except Exception:
             return False
@@ -32,7 +32,7 @@ class ModbusHandler:
     def write_registers(self, address, values):
         try:
             self.client.connect()
-            result = self.client.write_registers(address=address, values=values, slave=self.unit_id)
+            result = self.client.write_registers(address=address, values=values, device_id=self.unit_id)
             return not result.isError()
         except Exception:
             return False
