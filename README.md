@@ -33,6 +33,7 @@ Il est toutefois fort probable que cela fonctionne également avec d'autres mod�
 
 - [Télécharger la dernière version](../../releases/latest)
 - Décompressez l’archive .zip.
+- Renommez le dossier extrait en **pool_technologie** s'il ne l'est déjà pas
 - Copiez le dossier **pool_technologie** dans **config/custom_components/**
 - Redémarrer Home Assistant
 - Ajouter l'intégration via **Paramètres** > **Appareils & services** > **Ajouter une intégration**.
