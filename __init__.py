@@ -29,5 +29,7 @@ async def async_setup_entry(hass, entry):
 async def async_unload_entry(hass, entry):
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded:
+        controller = hass.data[DOMAIN][entry.entry_id]["controller"]
+        await controller.stop()
         hass.data[DOMAIN].pop(entry.entry_id)
     return unloaded

@@ -21,7 +21,9 @@ MODELS = {
                 "unit": "pH",
                 "scale": 0.001,
                 "precision": 1,
-                "icon": "mdi:test-tube"
+                "icon": "mdi:test-tube",
+                "min_valid": 0,
+                "max_valid": 14
             },
             {
                 "name": "Température de l'eau",
@@ -32,7 +34,9 @@ MODELS = {
                 "scale": 0.1,
                 "precision": 1,
                 "icon": "mdi:thermometer-water",
-                "device_class": "temperature"
+                "device_class": "temperature",
+                "min_valid": -10,
+                "max_valid": 60
             },
             {
                 "name": "Taux de sel",
@@ -42,7 +46,9 @@ MODELS = {
                 "unit": "g/L",
                 "scale": 0.1,
                 "precision": 1,
-                "icon": "mdi:shaker-outline"
+                "icon": "mdi:shaker-outline",
+                "min_valid": 0,
+                "max_valid": 20
             },
             {
                 "name": "ORP",
@@ -52,7 +58,9 @@ MODELS = {
                 "unit": "mV",
                 "scale": 1,
                 "precision": 0,
-                "icon": "mdi:lightning-bolt"
+                "icon": "mdi:lightning-bolt",
+                "min_valid": 0,
+                "max_valid": 1200
             },
             {
                 "name": "Consigne pH",
@@ -62,7 +70,9 @@ MODELS = {
                 "unit": "pH",
                 "scale": 0.000390625,
                 "precision": 1,
-                "icon": "mdi:cog"
+                "icon": "mdi:cog",
+                "min_valid": 0,
+                "max_valid": 14
             },
             {
                 "name": "Consigne ORP",
@@ -72,7 +82,9 @@ MODELS = {
                 "unit": "mV",
                 "scale": 1,
                 "precision": 0,
-                "icon": "mdi:cog"
+                "icon": "mdi:cog",
+                "min_valid": 0,
+                "max_valid": 1200
             }
         ]
     }

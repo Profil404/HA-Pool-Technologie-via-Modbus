@@ -1,10 +1,13 @@
-from homeassistant.components.number import NumberEntity
-from homeassistant.helpers.entity import EntityCategory
-from homeassistant.const import UnitOfElectricPotential
 import asyncio
+import logging
+
+from homeassistant.components.number import NumberEntity
+from homeassistant.const import UnitOfElectricPotential
 
 from .models import MODELS
 from .const import DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     controller = hass.data[DOMAIN][config_entry.entry_id]["controller"]
@@ -56,14 +59,31 @@ class ORPSetpointEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        result = self._handler.read_register(self._address)
+        result = await self._hass.async_add_executor_job(self._handler.read_register, self._address)
         if result:
             self._attr_native_value = int(result[0])
 
     async def async_set_native_value(self, value: float) -> None:
-        self._attr_native_value = int(value)
-        self._handler.write_register(self._address, int(value))
+        target = int(value)
+        ok = await self._hass.async_add_executor_job(
+            self._handler.write_register, self._address, target
+        )
+        if not ok:
+            _LOGGER.warning("Échec d'écriture de la consigne ORP (%s)", target)
+            return
+
         await asyncio.sleep(0.5)
+        verified = await self._hass.async_add_executor_job(
+            self._handler.read_register_verified, self._address, target
+        )
+        if not verified:
+            _LOGGER.warning(
+                "Consigne ORP non confirmée par l'appareil après écriture (%s)", target
+            )
+            return
+
+        self._attr_native_value = target
+        self.async_write_ha_state()
 
 class PHSetpointEntity(NumberEntity):
     def __init__(self, hass, handler, entry_id, model_label):
@@ -105,13 +125,29 @@ class PHSetpointEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        result = self._handler.read_register(self._address)
+        result = await self._hass.async_add_executor_job(self._handler.read_register, self._address)
         if result:
-            raw = result[0]
-            self._attr_native_value = round(raw * self._scale, 2)
+            self._attr_native_value = round(result[0] * self._scale, 2)
 
     async def async_set_native_value(self, value: float) -> None:
-        self._attr_native_value = value
         raw = int(round(value / self._scale))
-        self._handler.write_register(self._address, raw)
+        ok = await self._hass.async_add_executor_job(
+            self._handler.write_register, self._address, raw
+        )
+        if not ok:
+            _LOGGER.warning("Échec d'écriture de la consigne pH (raw=%s)", raw)
+            return
+
         await asyncio.sleep(0.5)
+        # tolerance=1 car la conversion pH -> brut peut arrondir au LSB près
+        verified = await self._hass.async_add_executor_job(
+            self._handler.read_register_verified, self._address, raw, 1, 1
+        )
+        if not verified:
+            _LOGGER.warning(
+                "Consigne pH non confirmée par l'appareil après écriture (raw=%s)", raw
+            )
+            return
+
+        self._attr_native_value = value
+        self.async_write_ha_state()

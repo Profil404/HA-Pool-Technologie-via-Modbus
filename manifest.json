@@ -2,10 +2,12 @@
 {
   "domain": "pool_technologie",
   "name": "Pool Technologie",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "config_flow": true,
   "documentation": "https://github.com/Profil404/HA-Pool-Technologie-via-Modbus",
   "requirements": ["pymodbus>=3.9.2"],
   "dependencies": [],
-  "codeowners": ["@profil404"]
+  "codeowners": ["@profil404"],
+  "iot_class": "local_polling",
+  "integration_type": "device"
 }
