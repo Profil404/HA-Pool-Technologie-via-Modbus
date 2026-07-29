@@ -22,6 +22,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(sensors)
 
     async def update_sensors(now):
+        if controller.should_skip_poll():
+            return
         for sensor in sensors:
             # read_register est bloquant (pymodbus synchrone) : on le sort de
             # la boucle asyncio de HA pour ne pas la geler pendant un timeout Modbus.

@@ -1,3 +1,7 @@
+pool_technologie – Version 1.0.5
+	Ajout d'une entité switch pour activer/désactiver le mode boost
+	Les cycles de lecture sont sautés quand l'électrolyseur est déconnecté, avec tentative de reconnexion périodique, au lieu de tenter la lecture à chaque cycle
+
 pool_technologie – Version 1.0.4
 	Connexion Modbus TCP maintenue ouverte en continu (fin des connexions/déconnexions à chaque lecture ou écriture)
 	Lectures et écritures Modbus déplacées hors de la boucle principale de Home Assistant (thread executor) pour éviter tout blocage de l'interface

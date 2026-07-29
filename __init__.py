@@ -2,7 +2,7 @@ from .controller import PoolController
 from .const import DOMAIN, SCAN_INTERVAL
 from .modbus_handler import ModbusHandler
 
-PLATFORMS = ["sensor", "number", "binary_sensor"]
+PLATFORMS = ["sensor", "number", "binary_sensor", "switch"]
 
 async def async_setup_entry(hass, entry):
     hass.data.setdefault(DOMAIN, {})
