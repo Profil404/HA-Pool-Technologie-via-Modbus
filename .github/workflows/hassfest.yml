@@ -1,0 +1,21 @@
+name: Validate with hassfest
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v4"
+      - name: "Arrange files for hassfest (repo content is at root, hassfest expects custom_components/<domain>)"
+        run: |
+          mkdir -p custom_components/pool_technologie
+          find . -maxdepth 1 -type f -name "*.py" -exec cp {} custom_components/pool_technologie/ \;
+          cp manifest.json custom_components/pool_technologie/
+          cp -r translations custom_components/pool_technologie/
+      - uses: "home-assistant/actions/hassfest@master"
