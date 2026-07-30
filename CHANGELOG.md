@@ -6,6 +6,7 @@ pool_technologie – Version 1.0.6
 	Correction : le switch de mode boost (ajouté en 1.0.5) tentait une lecture Modbus à chaque cycle même électrolyseur déconnecté, provoquant des avertissements de dépassement d'intervalle (timeouts de ~10s)
 	Correction : le switch de mode boost sondait aussi la reconnexion de son côté, ce qui doublait la fréquence réelle des tentatives par rapport à celle voulue
 	Les entités switch (boost, régulation pH auto) sont désormais rafraîchies sur le même cycle que les capteurs (piloté par le controller) plutôt que par leur propre polling natif Home Assistant, pour rester alignées sur l'intervalle configuré et éviter tout sondage dupliqué de la reconnexion
+	Ajout de l'adresse Modbus en attribut de chaque capteur
 
 pool_technologie – Version 1.0.5
 	Ajout d'une entité switch pour activer/désactiver le mode boost

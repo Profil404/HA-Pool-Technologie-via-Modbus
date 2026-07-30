@@ -69,6 +69,10 @@ class PoolSensor(SensorEntity, RestoreEntity):
         return self._state
 
     @property
+    def extra_state_attributes(self):
+        return {"modbus_address": self._config["address"]}
+
+    @property
     def device_info(self):
         return {
             "identifiers": {(DOMAIN, self._entry_id)},
