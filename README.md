@@ -1,44 +1,59 @@
 # Pool Technologie – Intégration Home Assistant
 
-Intégration personnalisée Home Assistant pour les électrolyseurs de la marque Pool Technologie (testé et validé avec l’Ibiza iBasel Duo) via Modbus TCP.
+Intégration personnalisée Home Assistant pour les électrolyseurs de la marque Pool Technologie via Modbus TCP.
 
-## Fonctionnalité
+## Fonctionnalités
 
-Cette intégration permet de suivre et contrôler facilement les principaux paramètres de votre piscine
+Cette intégration permet de suivre et contrôler facilement les principaux paramètres de votre piscine :
 
-- Température de l’eau 
+- Température de l'eau
 - pH
 - Taux de sel
-- ORP
+- ORP *(optionnel, si une sonde ORP est installée)*
 - Taille du bassin
 - Consignes pH et ORP (lecture et écriture)
-- État de la communication Modbus
+- Mode boost (activation/désactivation)
+- Régulation pH automatique (activation/désactivation)
+- État de la communication Modbus (avec reprise automatique après une déconnexion)
+
+## Configuration
+
+Lors de l'ajout de l'intégration, vous renseignez :
+
+- L'adresse IP et le port de votre convertisseur Modbus TCP/IP
+- L'adresse Modbus de l'électrolyseur
+- Le modèle de votre électrolyseur (voir la liste ci-dessous)
+- La présence ou non d'une sonde ORP (masque les entités ORP si absente)
+- L'intervalle de rafraîchissement des données (en secondes)
+
+Ces deux derniers réglages restent modifiables après coup, sans réinstaller l'intégration, via **Paramètres** > **Appareils & services** > **Pool Technologie** > **Configurer**.
 
 ## Matériel nécessaire
 
-Un convertisseur RS485 ↔ TCP/IP est indispensable pour connecter l’électrolyseur à votre réseau.
+Un convertisseur RS485 ↔ TCP/IP est indispensable pour connecter l'électrolyseur à votre réseau.
 
 Exemple : [Waveshare Industrial Serial Server RS485 to RJ45 Ethernet TCP/IP to Serial Rail-Mount](https://amzn.to/3HeBeuT)
 
 ## Compatibilité
 
-Testé avec les modèles d'électrolyseurs suivants : 
+Testé et validé par des utilisateurs avec les modèles d'électrolyseurs suivants :
 
-- [X]  Ibiza iBasel Duo
-- [X]  WaterAir Salt Gold Duo
+- [X] Ibiza iBasel Duo
+- [X] WaterAir Salt Gold Duo
+- [X] Poolsquad UV
 
-Il est toutefois fort probable que cela fonctionne également avec d'autres modèles Pool Technologie. 
+Il est toutefois fort probable que cela fonctionne également avec d'autres modèles Pool Technologie, le mapping Modbus étant identique d'un modèle à l'autre.
 
 ## Installation
 
 - [Télécharger la dernière version](../../releases/latest)
-- Décompressez l’archive .zip.
-- Renommez le dossier extrait en **pool_technologie** s'il ne l'est déjà pas
+- Décompressez l'archive .zip
+- Renommez le dossier extrait en **pool_technologie** s'il ne l'est pas déjà
 - Copiez le dossier **pool_technologie** dans **config/custom_components/**
-- Redémarrer Home Assistant
-- Ajouter l'intégration via **Paramètres** > **Appareils & services** > **Ajouter une intégration**.
-- Recherchez **Pool Technologie**.
-- Suivre les indications de configuration.
+- Redémarrez Home Assistant
+- Ajoutez l'intégration via **Paramètres** > **Appareils & services** > **Ajouter une intégration**
+- Recherchez **Pool Technologie**
+- Suivez les indications de configuration
 
 ## Aperçu
 
