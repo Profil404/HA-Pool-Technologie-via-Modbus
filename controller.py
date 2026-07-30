@@ -18,6 +18,7 @@ class PoolController:
         self._modbus_fail_count = 0
         self._modbus_fail_threshold = 5
         self._probe_counter = 0
+        self._poll_listeners = []
 
     @property
     def scan_interval(self):
@@ -26,6 +27,14 @@ class PoolController:
     @property
     def handler(self):
         return self._handler
+
+    def add_poll_listener(self, callback):
+        """Enregistre un callback appelé après chaque cycle de poll réussi
+        (piloté par le même timer que les capteurs, cf. update_sensors)."""
+        self._poll_listeners.append(callback)
+
+    def remove_poll_listener(self, callback):
+        self._poll_listeners = [cb for cb in self._poll_listeners if cb is not callback]
 
     async def start(self):
         await self._hass.async_add_executor_job(self._handler.connect)

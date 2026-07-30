@@ -1,3 +1,12 @@
+pool_technologie – Version 1.0.6
+	Ajout d'une entité switch pour activer/désactiver la régulation pH automatique
+	Ajout d'une option de configuration (activable après coup, avec rechargement automatique) pour indiquer si une sonde ORP est installée : sans elle, les entités ORP (capteur, consigne en lecture seule, consigne éditable) ne sont pas créées
+	L'intervalle de rafraîchissement Modbus est maintenant configurable à l'installation et modifiable ensuite dans les options, au lieu d'être fixé en dur à 60s
+	Ajout des modèles WaterAir Salt Gold Duo et Poolsquad UV (confirmés fonctionnels par des utilisateurs du forum HACF, même mapping Modbus que l'Ibiza iBasel Duo)
+	Correction : le switch de mode boost (ajouté en 1.0.5) tentait une lecture Modbus à chaque cycle même électrolyseur déconnecté, provoquant des avertissements de dépassement d'intervalle (timeouts de ~10s)
+	Correction : le switch de mode boost sondait aussi la reconnexion de son côté, ce qui doublait la fréquence réelle des tentatives par rapport à celle voulue
+	Les entités switch (boost, régulation pH auto) sont désormais rafraîchies sur le même cycle que les capteurs (piloté par le controller) plutôt que par leur propre polling natif Home Assistant, pour rester alignées sur l'intervalle configuré et éviter tout sondage dupliqué de la reconnexion
+
 pool_technologie – Version 1.0.5
 	Ajout d'une entité switch pour activer/désactiver le mode boost
 	Les cycles de lecture sont sautés quand l'électrolyseur est déconnecté, avec tentative de reconnexion périodique, au lieu de tenter la lecture à chaque cycle

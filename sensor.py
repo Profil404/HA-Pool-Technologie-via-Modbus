@@ -2,10 +2,13 @@ import logging
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.restore_state import RestoreEntity
-from .const import DOMAIN
+from .const import DOMAIN, CONF_REGULATION_ORP
 from .models import MODELS
 
 _LOGGER = logging.getLogger(__name__)
+
+# Capteurs sans intérêt si aucune sonde ORP n'est installée
+_ORP_SENSOR_KEYS = {"orp", "consigne_orp"}
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -14,9 +17,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     controller = data["controller"]
     handler = controller.handler  # même connexion que number.py, pas de client dupliqué
 
+    regulation_orp = config_entry.options.get(
+        CONF_REGULATION_ORP, config_entry.data.get(CONF_REGULATION_ORP, False)
+    )
+
     sensors = [
         PoolSensor(hass, sensor_conf, handler, config_entry.entry_id, MODELS[model_key]["name"])
         for sensor_conf in MODELS[model_key]["sensors"]
+        if regulation_orp or sensor_conf.get("translation_key") not in _ORP_SENSOR_KEYS
     ]
 
     async_add_entities(sensors)
@@ -29,6 +37,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             # la boucle asyncio de HA pour ne pas la geler pendant un timeout Modbus.
             await hass.async_add_executor_job(sensor.update)
             sensor.async_write_ha_state()
+        # Rafraîchit les entités d'autres plateformes (switch.py) sur le même cycle,
+        # au lieu de les laisser gérer leur propre polling natif HA à un rythme différent.
+        for poll_listener in list(controller._poll_listeners):
+            await poll_listener()
 
     controller._update_callback = update_sensors
 

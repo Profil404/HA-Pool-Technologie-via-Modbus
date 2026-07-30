@@ -8,7 +8,9 @@
           "host": "Adresse IP",
           "port": "Port TCP",
           "unit_id": "Adresse Modbus",
-          "model": "Modèle de l’électrolyseur"
+          "model": "Modèle de l’électrolyseur",
+          "regulation_orp": "Régulation ORP (sonde ORP installée)",
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
         }
       }
     },
@@ -18,6 +20,17 @@
     },
     "abort": {
       "already_configured": "Cet électrolyseur est déjà configuré"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de l’électrolyseur Pool Technologie",
+        "data": {
+          "regulation_orp": "Régulation ORP (sonde ORP installée)",
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
     }
   },
   "entity": {
@@ -60,6 +73,9 @@
     "switch": {
       "boost": {
         "name": "Mode boost"
+      },
+      "ph_auto": {
+        "name": "Régulation pH automatique"
       }
     }
   }

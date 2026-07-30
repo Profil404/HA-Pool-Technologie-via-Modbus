@@ -5,7 +5,7 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.const import UnitOfElectricPotential
 
 from .models import MODELS
-from .const import DOMAIN
+from .const import DOMAIN, CONF_REGULATION_ORP
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -14,10 +14,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     model_label = MODELS[config_entry.data["model"]]["name"]
     handler = controller.handler
 
-    entities = [
-        ORPSetpointEntity(hass, handler, config_entry.entry_id, model_label),
-        PHSetpointEntity(hass, handler, config_entry.entry_id, model_label),
-    ]
+    regulation_orp = config_entry.options.get(
+        CONF_REGULATION_ORP, config_entry.data.get(CONF_REGULATION_ORP, False)
+    )
+
+    entities = [PHSetpointEntity(hass, handler, config_entry.entry_id, model_label)]
+    if regulation_orp:
+        entities.append(ORPSetpointEntity(hass, handler, config_entry.entry_id, model_label))
     async_add_entities(entities)
 
 class ORPSetpointEntity(NumberEntity):
