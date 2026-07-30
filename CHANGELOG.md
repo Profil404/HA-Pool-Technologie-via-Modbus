@@ -1,3 +1,7 @@
+pool_technologie – Version 1.0.7
+	Préparation du dépôt pour HACS : ajout de hacs.json, LICENSE, logos de la marque, workflows de validation (HACS action + hassfest)
+	Correction du manifest.json : ajout du champ issue_tracker requis et tri des clés (domain, name, puis ordre alphabétique)
+
 pool_technologie – Version 1.0.6
 	Ajout d'une entité switch pour activer/désactiver la régulation pH automatique
 	Ajout d'une option de configuration (activable après coup, avec rechargement automatique) pour indiquer si une sonde ORP est installée : sans elle, les entités ORP (capteur, consigne en lecture seule, consigne éditable) ne sont pas créées
