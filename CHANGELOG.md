@@ -1,3 +1,7 @@
+pool_technologie – Version 1.0.9
+	Correction de la structure du dépôt pour la soumission HACS officielle (retour de Frenck, mainteneur de HACS) : les fichiers de l'intégration sont déplacés dans custom_components/pool_technologie/ au lieu d'être à la racine, et content_in_root est retiré de hacs.json — HACS installe les intégrations depuis ce chemin précis, content_in_root n'étant pas un layout valide pour cette catégorie
+	Simplification du workflow hassfest.yml : l'étape de réarrangement des fichiers n'est plus nécessaire, la structure du dépôt est maintenant directement compatible
+
 pool_technologie – Version 1.0.8
 	Ajout du modèle Just Salt Pro (même mapping Modbus, reverse engineering confirmé par un utilisateur du forum HACF)
 	Les consignes pH et ORP (number.py) sont maintenant rafraîchies à chaque cycle au lieu d'être lues uniquement au démarrage de l'intégration : un changement fait depuis l'application Pool Technologie (ou un autre client Modbus) est désormais répercuté dans Home Assistant sans redémarrage. Les lectures hors plage sont ignorées, la dernière valeur connue est conservée
