@@ -55,6 +55,9 @@
       },
       "consigne_orp": {
         "name": "Consigne ORP"
+      },
+      "tension_cellule": {
+        "name": "Tension cellule"
       }
     },
     "number": {
@@ -63,6 +66,9 @@
       },
       "consigne_ph": {
         "name": "Consigne pH"
+      },
+      "consigne_electrolyse": {
+        "name": "Consigne électrolyse"
       }
     },
     "binary_sensor": {

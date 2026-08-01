@@ -88,6 +88,24 @@ _COMMON_SENSORS = [
     }
 ]
 
+# Non disponible sur l'Ibiza iBasel Duo : l'iBaRegul Duo (boîtier de régulation, expose le
+# Modbus) ne communique pas cette donnée depuis l'iBaSel (boîtier séparé qui pilote la
+# cellule) — le registre y lit 0 en permanence, confirmé par test. Inclus pour les autres
+# modèles où la régulation et le pilotage de cellule sont dans le même boîtier, non testé.
+_TENSION_CELLULE = {
+    "name": "Tension cellule",
+    "translation_key": "tension_cellule",
+    "unique_id": "tension_cellule",
+    "address": 1061,
+    "unit": "mV",
+    "scale": 1,
+    "precision": 0,
+    "icon": "mdi:sine-wave",
+    "entity_category": "diagnostic",
+    "min_valid": 0,
+    "max_valid": 30000
+}
+
 MODELS = {
     "ibasel_duo": {
         "name": "Ibiza iBasel Duo",
@@ -95,10 +113,17 @@ MODELS = {
     },
     "waterair_salt_gold_duo": {
         "name": "WaterAir Salt Gold Duo",
-        "sensors": _COMMON_SENSORS
+        "sensors": _COMMON_SENSORS + [_TENSION_CELLULE]
     },
     "poolsquad_uv": {
         "name": "Poolsquad UV",
-        "sensors": _COMMON_SENSORS
+        "sensors": _COMMON_SENSORS + [_TENSION_CELLULE],
+        # Consigne électrolyse (registre 4168) confirmée fonctionnelle sur ce modèle par un
+        # utilisateur HACS (Pierre_Brdn) sans sonde ORP. Non confirmée sur les autres modèles.
+        "supports_electrolysis_setpoint": True
+    },
+    "just_salt_pro": {
+        "name": "Just Salt Pro",
+        "sensors": _COMMON_SENSORS + [_TENSION_CELLULE]
     }
 }

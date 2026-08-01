@@ -16,7 +16,7 @@ class PoolController:
         self._handler = handler
         self.modbus_ok = False
         self._modbus_fail_count = 0
-        self._modbus_fail_threshold = 5
+        self._modbus_fail_threshold = 3
         self._probe_counter = 0
         self._poll_listeners = []
 

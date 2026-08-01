@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure the Pool Technologie electrolyser",
+        "description": "Enter the connection details for your Modbus TCP/IP server.",
+        "data": {
+          "host": "IP address",
+          "port": "TCP port",
+          "unit_id": "Modbus address",
+          "model": "Electrolyser model",
+          "regulation_orp": "ORP regulation (ORP probe installed)",
+          "scan_interval": "Refresh interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to the Modbus TCP/IP server",
+      "invalid_host": "Invalid IP address"
+    },
+    "abort": {
+      "already_configured": "This electrolyser is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Pool Technologie electrolyser options",
+        "data": {
+          "regulation_orp": "ORP regulation (ORP probe installed)",
+          "scan_interval": "Refresh interval (seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "taille_bassin": {
+        "name": "Pool size"
+      },
+      "ph": {
+        "name": "pH"
+      },
+      "temperature_eau": {
+        "name": "Water temperature"
+      },
+      "taux_sel": {
+        "name": "Salt level"
+      },
+      "orp": {
+        "name": "ORP"
+      },
+      "consigne_ph": {
+        "name": "pH setpoint"
+      },
+      "consigne_orp": {
+        "name": "ORP setpoint"
+      },
+      "tension_cellule": {
+        "name": "Cell voltage"
+      }
+    },
+    "number": {
+      "consigne_orp": {
+        "name": "ORP setpoint"
+      },
+      "consigne_ph": {
+        "name": "pH setpoint"
+      },
+      "consigne_electrolyse": {
+        "name": "Electrolysis setpoint"
+      }
+    },
+    "binary_sensor": {
+      "modbus_status": {
+        "name": "Modbus communication status"
+      }
+    },
+    "switch": {
+      "boost": {
+        "name": "Boost mode"
+      },
+      "ph_auto": {
+        "name": "Automatic pH regulation"
+      }
+    }
+  }
+}

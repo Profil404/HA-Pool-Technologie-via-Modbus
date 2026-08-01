@@ -1,6 +1,7 @@
 import logging
 
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.const import EntityCategory
 from homeassistant.helpers.restore_state import RestoreEntity
 from .const import DOMAIN, CONF_REGULATION_ORP
 from .models import MODELS
@@ -32,15 +33,26 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async def update_sensors(now):
         if controller.should_skip_poll():
             return
+        any_success = False
         for sensor in sensors:
             # read_register est bloquant (pymodbus synchrone) : on le sort de
             # la boucle asyncio de HA pour ne pas la geler pendant un timeout Modbus.
-            await hass.async_add_executor_job(sensor.update)
+            ok = await hass.async_add_executor_job(sensor.update)
+            if ok:
+                any_success = True
             sensor.async_write_ha_state()
-        # Rafraîchit les entités d'autres plateformes (switch.py) sur le même cycle,
-        # au lieu de les laisser gérer leur propre polling natif HA à un rythme différent.
+        # Rafraîchit les entités d'autres plateformes (switch.py, number.py) sur le même
+        # cycle, au lieu de les laisser gérer leur propre polling natif HA à un rythme différent.
         for poll_listener in list(controller._poll_listeners):
-            await poll_listener()
+            if await poll_listener():
+                any_success = True
+        # Un seul appel par cycle : une lecture isolée en échec (registre ponctuellement
+        # invalide) ne doit pas, à elle seule, faire avancer le compteur de déconnexion
+        # si d'autres lectures du même cycle ont réussi.
+        if any_success:
+            controller.notify_modbus_success()
+        else:
+            controller.notify_modbus_failure()
 
     controller._update_callback = update_sensors
 
@@ -63,6 +75,8 @@ class PoolSensor(SensorEntity, RestoreEntity):
         self._attr_should_poll = False
 
         self._attr_device_class = config.get("device_class")
+        if config.get("entity_category") == "diagnostic":
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
     def state(self):
@@ -89,14 +103,16 @@ class PoolSensor(SensorEntity, RestoreEntity):
             except ValueError:
                 pass
                 
-    def update(self):
-        """Tourne dans un thread executor : ne jamais appeler depuis la boucle asyncio."""
-        controller = self.hass.data[DOMAIN][self._entry_id]["controller"]
+    def update(self) -> bool:
+        """Tourne dans un thread executor : ne jamais appeler depuis la boucle asyncio.
+
+        Retourne True/False (succès/échec) ; c'est update_sensors() qui décide, une
+        fois par cycle, d'appeler controller.notify_modbus_success/failure.
+        """
         result = self._handler.read_register(self._config["address"])
 
         if result is None:
-            controller.notify_modbus_failure()
-            return
+            return False
 
         value = round(result[0] * self._config.get("scale", 1), self._config.get("precision", 0))
 
@@ -106,8 +122,7 @@ class PoolSensor(SensorEntity, RestoreEntity):
             _LOGGER.debug(
                 "Lecture hors plage ignorée pour %s: %s", self._config["unique_id"], value
             )
-            controller.notify_modbus_failure()
-            return
+            return False
 
         self._state = value
-        controller.notify_modbus_success()
+        return True

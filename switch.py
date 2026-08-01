@@ -42,6 +42,10 @@ class BoostSwitch(SwitchEntity):
         self._attr_should_poll = False
 
     @property
+    def extra_state_attributes(self):
+        return {"modbus_address": _BOOST_DURATION_REG, "modbus_flag_address": _BOOST_FLAG_REG}
+
+    @property
     def device_info(self):
         return {
             "identifiers": {(DOMAIN, self._entry_id)},
@@ -57,16 +61,15 @@ class BoostSwitch(SwitchEntity):
     async def async_will_remove_from_hass(self):
         self._controller.remove_poll_listener(self._async_poll_refresh)
 
-    async def _async_poll_refresh(self):
+    async def _async_poll_refresh(self) -> bool:
         result = await self._hass.async_add_executor_job(
             self._handler.read_register, _BOOST_DURATION_REG
         )
-        if result is not None:
-            self._attr_is_on = result[0] > 0
-            self._controller.notify_modbus_success()
-        else:
-            self._controller.notify_modbus_failure()
+        if result is None:
+            return False
+        self._attr_is_on = result[0] > 0
         self.async_write_ha_state()
+        return True
 
     async def async_turn_on(self, **kwargs):
         ok = await self._hass.async_add_executor_job(
@@ -130,6 +133,10 @@ class PHAutoSwitch(SwitchEntity):
         self._attr_should_poll = False
 
     @property
+    def extra_state_attributes(self):
+        return {"modbus_address": _PH_AUTO_REG}
+
+    @property
     def device_info(self):
         return {
             "identifiers": {(DOMAIN, self._entry_id)},
@@ -145,16 +152,15 @@ class PHAutoSwitch(SwitchEntity):
     async def async_will_remove_from_hass(self):
         self._controller.remove_poll_listener(self._async_poll_refresh)
 
-    async def _async_poll_refresh(self):
+    async def _async_poll_refresh(self) -> bool:
         result = await self._hass.async_add_executor_job(
             self._handler.read_register, _PH_AUTO_REG
         )
-        if result is not None:
-            self._attr_is_on = result[0] > 0
-            self._controller.notify_modbus_success()
-        else:
-            self._controller.notify_modbus_failure()
+        if result is None:
+            return False
+        self._attr_is_on = result[0] > 0
         self.async_write_ha_state()
+        return True
 
     async def async_turn_on(self, **kwargs):
         ok = await self._hass.async_add_executor_job(
