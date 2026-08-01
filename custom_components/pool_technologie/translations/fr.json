@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer l’électrolyseur Pool Technologie",
+        "description": "Entrez les informations de connexion à votre serveur Modbus TCP/IP.",
+        "data": {
+          "host": "Adresse IP",
+          "port": "Port TCP",
+          "unit_id": "Adresse Modbus",
+          "model": "Modèle de l’électrolyseur",
+          "regulation_orp": "Régulation ORP (sonde ORP installée)",
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter au serveur Modbus TCP/IP",
+      "invalid_host": "Adresse IP invalide"
+    },
+    "abort": {
+      "already_configured": "Cet électrolyseur est déjà configuré"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de l’électrolyseur Pool Technologie",
+        "data": {
+          "regulation_orp": "Régulation ORP (sonde ORP installée)",
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "taille_bassin": {
+        "name": "Taille du bassin"
+      },
+      "ph": {
+        "name": "pH"
+      },
+      "temperature_eau": {
+        "name": "Température de l'eau"
+      },
+      "taux_sel": {
+        "name": "Taux de sel"
+      },
+      "orp": {
+        "name": "ORP"
+      },
+      "consigne_ph": {
+        "name": "Consigne pH"
+      },
+      "consigne_orp": {
+        "name": "Consigne ORP"
+      },
+      "tension_cellule": {
+        "name": "Tension cellule"
+      }
+    },
+    "number": {
+      "consigne_orp": {
+        "name": "Consigne ORP"
+      },
+      "consigne_ph": {
+        "name": "Consigne pH"
+      },
+      "consigne_electrolyse": {
+        "name": "Consigne électrolyse"
+      }
+    },
+    "binary_sensor": {
+      "modbus_status": {
+        "name": "État de la communication Modbus"
+      }
+    },
+    "switch": {
+      "boost": {
+        "name": "Mode boost"
+      },
+      "ph_auto": {
+        "name": "Régulation pH automatique"
+      }
+    }
+  }
+}
