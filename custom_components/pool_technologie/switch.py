@@ -4,6 +4,7 @@ import logging
 from homeassistant.components.switch import SwitchEntity
 
 from .const import DOMAIN
+from .options_helper import has_ph_probe
 from .models import MODELS
 
 _LOGGER = logging.getLogger(__name__)
@@ -19,10 +20,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     model_label = MODELS[config_entry.data["model"]]["name"]
     handler = controller.handler
 
-    async_add_entities([
-        BoostSwitch(hass, handler, controller, config_entry.entry_id, model_label),
-        PHAutoSwitch(hass, handler, controller, config_entry.entry_id, model_label),
-    ])
+    entities = [BoostSwitch(hass, handler, controller, config_entry.entry_id, model_label)]
+    # Sans sonde pH, la régulation pH automatique n'a pas de sens
+    if has_ph_probe(config_entry):
+        entities.append(PHAutoSwitch(hass, handler, controller, config_entry.entry_id, model_label))
+    async_add_entities(entities)
 
 class BoostSwitch(SwitchEntity):
     def __init__(self, hass, handler, controller, entry_id, model_label):

@@ -23,30 +23,36 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 
 ### Compatibilité par modèle
 
-Certaines entités ne sont créées que pour certains modèles et/ou selon que l'option "sonde ORP installée" est cochée dans la configuration (voir [Configuration](#configuration)) :
+Les entités en lecture seule sont créées pour tous les modèles. Celles qui n'ont pas encore été confirmées sur votre modèle sont **désactivées par défaut** : elles apparaissent grisées dans la page de l'appareil, et vous pouvez les activer en un clic pour essayer (**Paramètres** > **Appareils & services** > **Pool Technologie** > votre appareil). Une entité désactivée ne génère aucune lecture Modbus.
 
-| Entité | Ibiza iBasel Duo | WaterAir Salt Gold Duo | Poolsquad UV | Just Salt Pro |
-|---|---|---|---|---|
-| pH | ✅ | ✅ | ✅ | ✅ |
-| Température de l'eau | ✅ | ✅ | ✅ | ✅ |
-| Taux de sel | ✅ | ✅ | ✅ | ✅ |
-| ORP¹ | ✅ | ✅ | ✅ | ✅ |
-| Taille du bassin | ✅ | ✅ | ✅ | ✅ |
-| Tension cellule³ | ❌ | ❓ | ✅ | ❓ |
-| Consigne pH | ✅ | ✅ | ✅ | ✅ |
-| Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ |
-| Consigne électrolyse² | ❌ | ❓ | ✅ | ❓ |
-| Mode boost | ✅ | ✅ | ✅ | ✅ |
-| Régulation pH automatique | ✅ | ✅ | ✅ | ✅ |
-| État de la communication Modbus | ✅ | ✅ | ✅ | ✅ |
+Les réglages modifiables, eux, ne sont créés que sur les modèles où ils ont été confirmés : aucune écriture à l'aveugle dans l'électrolyseur.
 
-✅ Confirmé fonctionnel &nbsp;&nbsp;❌ Confirmé non fonctionnel &nbsp;&nbsp;❓ Non testé — activé par défaut dans le code sauf mention contraire, mais jamais confirmé sur ce modèle
+| Entité | Ibiza iBasel Duo | WaterAir Salt Gold Duo | Poolsquad UV | Just Salt Pro | RACER⁵ |
+|---|---|---|---|---|---|
+| pH⁴ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Température de l'eau | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Taux de sel | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ORP¹ | ✅ | ✅ | ✅ | ✅ | ❓ |
+| Taille du bassin | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Tension cellule³ | ❌ | ❓ | ✅ | ❓ | ✅ |
+| Consigne pH⁴ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ❓ |
+| Consigne électrolyse² | ❌ | ❓ | ✅ | ❓ | ✅ |
+| Mode boost | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Régulation pH automatique⁴ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| État de la communication Modbus | ✅ | ✅ | ✅ | ✅ | — |
+
+✅ Confirmé fonctionnel, entité activée &nbsp;&nbsp;❌ Confirmé non fonctionnel, entité non créée &nbsp;&nbsp;❓ Non testé, entité créée mais **désactivée par défaut** (sauf réglage modifiable, non créé) &nbsp;&nbsp;— Sans objet
 
 ¹ Créée uniquement si une sonde ORP est déclarée dans la configuration.
 
-² Poolsquad UV uniquement pour l'instant, et seulement si **aucune** sonde ORP n'est déclarée (sans ORP, l'électrolyse n'est pas pilotée automatiquement) — non créée du tout sur les modèles marqués ❓ ou ❌ tant que ce n'est pas confirmé.
+² Poolsquad UV uniquement pour l'instant, et seulement si **aucune** sonde ORP n'est déclarée (sans ORP, l'électrolyse n'est pas pilotée automatiquement). Réglage modifiable : non créé sur les modèles marqués ❓ ou ❌ tant que ce n'est pas confirmé.
 
 ³ Non disponible sur l'Ibiza iBasel Duo : l'iBaRegul Duo (boîtier de régulation, qui expose le Modbus) ne communique pas cette donnée depuis l'iBaSel (boîtier séparé qui pilote la cellule) — confirmé par test, le registre y lit 0 en permanence.
+
+⁴ Créée uniquement si une sonde pH est déclarée dans la configuration (option cochée par défaut).
+
+⁵ Le RACER n'est pas un modèle sélectionnable dans l'intégration : choisissez un des modèles ci-dessus et décochez la sonde pH. Cette colonne est renseignée d'après les registres lus par [nadlio](https://github.com/nadlio) via ESPHome ([issue #4](../../issues/4)), même plateforme Modbus ; ❓ = registre non lu dans son montage.
 
 ### Vous avez un autre modèle, ou pouvez confirmer/infirmer une ligne ❓ ?
 
@@ -59,10 +65,11 @@ Lors de l'ajout de l'intégration, vous renseignez :
 - L'adresse IP et le port de votre convertisseur Modbus TCP/IP
 - L'adresse Modbus de l'électrolyseur
 - Le modèle de votre électrolyseur (voir la liste ci-dessous)
+- La présence ou non d'une sonde pH (masque les entités pH si absente)
 - La présence ou non d'une sonde ORP (masque les entités ORP si absente)
 - L'intervalle de rafraîchissement des données (en secondes)
 
-Ces deux derniers réglages restent modifiables après coup, sans réinstaller l'intégration, via **Paramètres** > **Appareils & services** > **Pool Technologie** > **Configurer**.
+La présence des sondes et l'intervalle restent modifiables après coup, sans réinstaller l'intégration, via **Paramètres** > **Appareils & services** > **Pool Technologie** > **Configurer**.
 
 ## Matériel nécessaire
 

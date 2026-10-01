@@ -8,6 +8,7 @@ from .const import (
     CONF_UNIT_ID,
     CONF_MODEL,
     CONF_REGULATION_ORP,
+    CONF_SONDE_PH,
     CONF_SCAN_INTERVAL,
     SCAN_INTERVAL,
 )
@@ -24,6 +25,7 @@ class PoolTechnologieConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_PORT: user_input[CONF_PORT],
                     CONF_UNIT_ID: user_input[CONF_UNIT_ID],
                     CONF_MODEL: user_input[CONF_MODEL],
+                    CONF_SONDE_PH: user_input[CONF_SONDE_PH],
                     CONF_REGULATION_ORP: user_input[CONF_REGULATION_ORP],
                     CONF_SCAN_INTERVAL: user_input[CONF_SCAN_INTERVAL],
                 }
@@ -34,6 +36,7 @@ class PoolTechnologieConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_PORT, default=502): int,
             vol.Required(CONF_UNIT_ID, default=1): int,
             vol.Required(CONF_MODEL): vol.In({k: v["name"] for k, v in MODELS.items()}),
+            vol.Required(CONF_SONDE_PH, default=True): bool,
             vol.Required(CONF_REGULATION_ORP, default=False): bool,
             vol.Required(CONF_SCAN_INTERVAL, default=SCAN_INTERVAL): int,
         })
@@ -53,6 +56,12 @@ class PoolTechnologieOptionsFlow(config_entries.OptionsFlow):
 
         entry = self.config_entry
         schema = vol.Schema({
+            vol.Required(
+                CONF_SONDE_PH,
+                default=entry.options.get(
+                    CONF_SONDE_PH, entry.data.get(CONF_SONDE_PH, True)
+                ),
+            ): bool,
             vol.Required(
                 CONF_REGULATION_ORP,
                 default=entry.options.get(

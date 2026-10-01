@@ -9,6 +9,7 @@
           "port": "Port TCP",
           "unit_id": "Adresse Modbus",
           "model": "Modèle de l’électrolyseur",
+          "sonde_ph": "Régulation pH (sonde pH installée)",
           "regulation_orp": "Régulation ORP (sonde ORP installée)",
           "scan_interval": "Intervalle de rafraîchissement (secondes)"
         }
@@ -27,6 +28,7 @@
       "init": {
         "title": "Options de l’électrolyseur Pool Technologie",
         "data": {
+          "sonde_ph": "Régulation pH (sonde pH installée)",
           "regulation_orp": "Régulation ORP (sonde ORP installée)",
           "scan_interval": "Intervalle de rafraîchissement (secondes)"
         }

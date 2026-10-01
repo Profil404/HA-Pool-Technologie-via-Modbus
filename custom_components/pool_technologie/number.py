@@ -5,7 +5,8 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.const import UnitOfElectricPotential
 
 from .models import MODELS
-from .const import DOMAIN, CONF_REGULATION_ORP
+from .const import DOMAIN
+from .options_helper import has_ph_probe, has_orp_probe
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,11 +16,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     model_label = MODELS[model_key]["name"]
     handler = controller.handler
 
-    regulation_orp = config_entry.options.get(
-        CONF_REGULATION_ORP, config_entry.data.get(CONF_REGULATION_ORP, False)
-    )
+    regulation_orp = has_orp_probe(config_entry)
 
-    entities = [PHSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label)]
+    entities = []
+    if has_ph_probe(config_entry):
+        entities.append(PHSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
     if regulation_orp:
         entities.append(ORPSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
     # Consigne électrolyse : uniquement confirmée sur les modèles qui l'exposent (cf. models.py),

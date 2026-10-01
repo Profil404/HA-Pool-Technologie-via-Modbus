@@ -9,6 +9,7 @@
           "port": "TCP port",
           "unit_id": "Modbus address",
           "model": "Electrolyser model",
+          "sonde_ph": "pH regulation (pH probe installed)",
           "regulation_orp": "ORP regulation (ORP probe installed)",
           "scan_interval": "Refresh interval (seconds)"
         }
@@ -27,6 +28,7 @@
       "init": {
         "title": "Pool Technologie electrolyser options",
         "data": {
+          "sonde_ph": "pH regulation (pH probe installed)",
           "regulation_orp": "ORP regulation (ORP probe installed)",
           "scan_interval": "Refresh interval (seconds)"
         }
