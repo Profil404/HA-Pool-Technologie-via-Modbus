@@ -71,6 +71,12 @@
       },
       "consigne_electrolyse": {
         "name": "Electrolysis setpoint"
+      },
+      "concentration_correcteur_ph": {
+        "name": "pH corrector concentration"
+      },
+      "taille_bassin": {
+        "name": "Pool size setpoint"
       }
     },
     "binary_sensor": {
