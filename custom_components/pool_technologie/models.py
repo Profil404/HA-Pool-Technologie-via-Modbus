@@ -27,6 +27,12 @@ MODELS = {
 
 ALL_MODELS = frozenset(MODELS)
 
+# Diagnostics cellule (alarmes 4172, heures de fonctionnement 4463, inversion 4170).
+# L'iBasel Duo est exclu : l'iBaRegul (boîtier de régulation) ne remonte pas ces
+# données depuis l'iBaSel (boîtier séparé qui pilote la cellule) — cf. tension_cellule.
+CELL_DIAGNOSTICS_CONFIRMED = {"poolsquad_uv", "just_salt_pro"}
+CELL_DIAGNOSTICS_UNSUPPORTED = {"ibasel_duo"}
+
 # Clés des capteurs qui n'ont de sens qu'avec la sonde correspondante installée
 PH_SENSOR_KEYS = {"ph", "consigne_ph"}
 ORP_SENSOR_KEYS = {"orp", "consigne_orp"}
@@ -131,6 +137,20 @@ SENSORS = [
         # donnée depuis l'iBaSel (boîtier séparé qui pilote la cellule) : registre à 0 en
         # permanence, confirmé par test.
         "unsupported": {"ibasel_duo"},
+    },
+    {
+        "translation_key": "heures_fonctionnement",
+        "unique_id": "heures_fonctionnement",
+        "address": 4463,
+        "unit": "h",
+        "scale": 1,
+        "precision": 0,
+        "icon": "mdi:timer-outline",
+        "entity_category": "diagnostic",
+        "min_valid": 0,
+        "max_valid": 100000,
+        "confirmed": CELL_DIAGNOSTICS_CONFIRMED,
+        "unsupported": CELL_DIAGNOSTICS_UNSUPPORTED,
     },
 ]
 

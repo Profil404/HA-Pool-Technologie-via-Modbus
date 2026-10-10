@@ -60,6 +60,9 @@
       },
       "tension_cellule": {
         "name": "Tension cellule"
+      },
+      "heures_fonctionnement": {
+        "name": "Heures de fonctionnement"
       }
     },
     "number": {
@@ -71,11 +74,26 @@
       },
       "consigne_electrolyse": {
         "name": "Consigne électrolyse"
+      },
+      "heure_inversion_cellule": {
+        "name": "Heure inversion cellule"
       }
     },
     "binary_sensor": {
       "modbus_status": {
         "name": "État de la communication Modbus"
+      },
+      "alarme_defaut_cellule": {
+        "name": "Alarme défaut cellule"
+      },
+      "alarme_manque_sel": {
+        "name": "Alarme manque de sel"
+      },
+      "alarme_trop_sel": {
+        "name": "Alarme trop de sel"
+      },
+      "alarme_eau_froide": {
+        "name": "Alarme sécurité eau froide"
       }
     },
     "switch": {

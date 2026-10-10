@@ -4,7 +4,7 @@ import logging
 from homeassistant.components.number import NumberEntity
 from homeassistant.const import UnitOfElectricPotential
 
-from .models import MODELS
+from .models import CELL_DIAGNOSTICS_CONFIRMED, MODELS
 from .const import DOMAIN
 from .options_helper import has_ph_probe, has_orp_probe
 
@@ -27,6 +27,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # et seulement en régulation manuelle — sans sonde ORP, qui pilote sinon l'électrolyse automatiquement.
     if MODELS[model_key].get("supports_electrolysis_setpoint") and not regulation_orp:
         entities.append(ElectrolysisSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
+    # Heure d'inversion de cellule : réglage d'installation, réservé aux modèles confirmés.
+    if model_key in CELL_DIAGNOSTICS_CONFIRMED:
+        entities.append(CellInversionHoursEntity(hass, handler, controller, config_entry.entry_id, model_label))
     async_add_entities(entities)
 
 class ORPSetpointEntity(NumberEntity):
@@ -285,4 +288,88 @@ class PHSetpointEntity(NumberEntity):
             return
 
         self._attr_native_value = value
+        self.async_write_ha_state()
+
+class CellInversionHoursEntity(NumberEntity):
+    def __init__(self, hass, handler, controller, entry_id, model_label):
+        self._hass = hass
+        self._handler = handler
+        self._controller = controller
+        self._entry_id = entry_id
+        self._model_label = model_label
+        self._address = 4170
+
+        self._attr_translation_key = "heure_inversion_cellule"
+        self._attr_has_entity_name = True
+        self._attr_entity_category = None
+        self._attr_icon = "mdi:swap-horizontal"
+        self._attr_unique_id = f"{entry_id}_heure_inversion_cellule"
+        self._attr_native_unit_of_measurement = "h"
+        self._attr_mode = "box"
+        self._attr_native_value = 4
+        self._attr_should_poll = False
+
+    @property
+    def native_min_value(self):
+        return 1
+
+    @property
+    def native_max_value(self):
+        return 24
+
+    @property
+    def native_step(self):
+        return 1
+
+    @property
+    def extra_state_attributes(self):
+        return {"modbus_address": self._address}
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": self._model_label,
+            "manufacturer": "Pool Technologie",
+            "model": self._model_label,
+        }
+
+    async def async_added_to_hass(self):
+        await self._async_poll_refresh()
+        self._controller.add_poll_listener(self._async_poll_refresh)
+
+    async def async_will_remove_from_hass(self):
+        self._controller.remove_poll_listener(self._async_poll_refresh)
+
+    async def _async_poll_refresh(self) -> bool:
+        result = await self._hass.async_add_executor_job(self._handler.read_register, self._address)
+        if result is None:
+            return False
+        value = int(round(result[0]))
+        if not (self.native_min_value <= value <= self.native_max_value):
+            return False
+        self._attr_native_value = value
+        self.async_write_ha_state()
+        return True
+
+    async def async_set_native_value(self, value: float) -> None:
+        target = int(round(value))
+        ok = await self._hass.async_add_executor_job(
+            self._handler.write_register, self._address, target
+        )
+        if not ok:
+            _LOGGER.warning("Échec d'écriture de l'heure d'inversion cellule (%s)", target)
+            return
+
+        await asyncio.sleep(0.5)
+        verified = await self._hass.async_add_executor_job(
+            self._handler.read_register_verified, self._address, target
+        )
+        if not verified:
+            _LOGGER.warning(
+                "Heure d'inversion cellule non confirmée par l'appareil après écriture (%s)", target
+            )
+            return
+
+        self._attr_native_value = target
         self.async_write_ha_state()
