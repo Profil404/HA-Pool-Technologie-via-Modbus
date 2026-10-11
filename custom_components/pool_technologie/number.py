@@ -27,6 +27,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # et seulement en régulation manuelle — sans sonde ORP, qui pilote sinon l'électrolyse automatiquement.
     if MODELS[model_key].get("supports_electrolysis_setpoint") and not regulation_orp:
         entities.append(ElectrolysisSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
+    # Concentration du correcteur pH : réglage lié à la sonde pH.
+    if has_ph_probe(config_entry):
+        entities.append(ConcentrationCorrectorEntity(hass, handler, controller, config_entry.entry_id, model_label))
+    entities.append(PoolSizeEntity(hass, handler, controller, config_entry.entry_id, model_label))
     async_add_entities(entities)
 
 class ORPSetpointEntity(NumberEntity):
@@ -285,4 +289,172 @@ class PHSetpointEntity(NumberEntity):
             return
 
         self._attr_native_value = value
+        self.async_write_ha_state()
+
+class ConcentrationCorrectorEntity(NumberEntity):
+    def __init__(self, hass, handler, controller, entry_id, model_label):
+        self._hass = hass
+        self._handler = handler
+        self._controller = controller
+        self._entry_id = entry_id
+        self._model_label = model_label
+        self._address = 4208
+
+        self._attr_translation_key = "concentration_correcteur_ph"
+        self._attr_has_entity_name = True
+        self._attr_entity_category = None
+        self._attr_icon = "mdi:flask-outline"
+        self._attr_unique_id = f"{entry_id}_concentration_correcteur_ph"
+        self._attr_native_unit_of_measurement = "%"
+        self._attr_mode = "box"
+        self._attr_native_value = 15
+        self._attr_should_poll = False
+
+    @property
+    def native_min_value(self):
+        return 5
+
+    @property
+    def native_max_value(self):
+        return 50
+
+    @property
+    def native_step(self):
+        return 1
+
+    @property
+    def extra_state_attributes(self):
+        return {"modbus_address": self._address}
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": self._model_label,
+            "manufacturer": "Pool Technologie",
+            "model": self._model_label,
+        }
+
+    async def async_added_to_hass(self):
+        await self._async_poll_refresh()
+        self._controller.add_poll_listener(self._async_poll_refresh)
+
+    async def async_will_remove_from_hass(self):
+        self._controller.remove_poll_listener(self._async_poll_refresh)
+
+    async def _async_poll_refresh(self) -> bool:
+        result = await self._hass.async_add_executor_job(self._handler.read_register, self._address)
+        if result is None:
+            return False
+        value = round(result[0], 1)
+        if not (self.native_min_value <= value <= self.native_max_value):
+            return False
+        self._attr_native_value = value
+        self.async_write_ha_state()
+        return True
+
+    async def async_set_native_value(self, value: float) -> None:
+        target = int(round(value))
+        ok = await self._hass.async_add_executor_job(
+            self._handler.write_register, self._address, target
+        )
+        if not ok:
+            _LOGGER.warning("Échec d'écriture de la concentration correcteur pH (%s)", target)
+            return
+
+        await asyncio.sleep(0.5)
+        verified = await self._hass.async_add_executor_job(
+            self._handler.read_register_verified, self._address, target
+        )
+        if not verified:
+            _LOGGER.warning(
+                "Concentration correcteur pH non confirmée par l'appareil après écriture (%s)", target
+            )
+            return
+
+        self._attr_native_value = float(target)
+        self.async_write_ha_state()
+
+class PoolSizeEntity(NumberEntity):
+    def __init__(self, hass, handler, controller, entry_id, model_label):
+        self._hass = hass
+        self._handler = handler
+        self._controller = controller
+        self._entry_id = entry_id
+        self._model_label = model_label
+        self._address = 4111
+
+        self._attr_translation_key = "taille_bassin"
+        self._attr_has_entity_name = True
+        self._attr_entity_category = None
+        self._attr_icon = "mdi:texture-box"
+        self._attr_unique_id = f"{entry_id}_taille_bassin"
+        self._attr_native_unit_of_measurement = "m³"
+        self._attr_mode = "box"
+        self._attr_native_value = 30
+        self._attr_should_poll = False
+
+    @property
+    def native_min_value(self):
+        return 1
+
+    @property
+    def native_max_value(self):
+        return 250
+
+    @property
+    def native_step(self):
+        return 1
+
+    @property
+    def extra_state_attributes(self):
+        return {"modbus_address": self._address}
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": self._model_label,
+            "manufacturer": "Pool Technologie",
+            "model": self._model_label,
+        }
+
+    async def async_added_to_hass(self):
+        await self._async_poll_refresh()
+        self._controller.add_poll_listener(self._async_poll_refresh)
+
+    async def async_will_remove_from_hass(self):
+        self._controller.remove_poll_listener(self._async_poll_refresh)
+
+    async def _async_poll_refresh(self) -> bool:
+        result = await self._hass.async_add_executor_job(self._handler.read_register, self._address)
+        if result is None:
+            return False
+        value = int(round(result[0]))
+        if not (self.native_min_value <= value <= self.native_max_value):
+            return False
+        self._attr_native_value = value
+        self.async_write_ha_state()
+        return True
+
+    async def async_set_native_value(self, value: float) -> None:
+        target = int(round(value))
+        ok = await self._hass.async_add_executor_job(
+            self._handler.write_register, self._address, target
+        )
+        if not ok:
+            _LOGGER.warning("Échec d'écriture de la taille du bassin (%s)", target)
+            return
+
+        await asyncio.sleep(0.5)
+        verified = await self._hass.async_add_executor_job(
+            self._handler.read_register_verified, self._address, target
+        )
+        if not verified:
+            _LOGGER.warning(
+                "Taille du bassin non confirmée par l'appareil après écriture (%s)", target
+            )
+            return
+
+        self._attr_native_value = target
         self.async_write_ha_state()

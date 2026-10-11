@@ -71,6 +71,12 @@
       },
       "consigne_electrolyse": {
         "name": "Consigna de electrólisis"
+      },
+      "concentration_correcteur_ph": {
+        "name": "Concentración del corrector de pH"
+      },
+      "taille_bassin": {
+        "name": "Ajuste del tamaño de la piscina"
       }
     },
     "binary_sensor": {
