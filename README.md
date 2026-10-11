@@ -25,7 +25,6 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Heure inversion cellule | Réglage éditable | 4170 | h | Fréquence d'inversion de polarité de la cellule |
 | Mode boost | Interrupteur | 4188 / 4182 | — | Active la production maximale pendant 24h |
 | Régulation pH automatique | Interrupteur | 4200 | — | Active/désactive la régulation pH automatique |
-| Alarmes cellule | Capteur binaire (diagnostic) | 4172 (bitmask) | — | Défaut cellule, manque de sel, trop de sel, sécurité eau froide — non disponibles sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | État de la communication Modbus | Diagnostic | — | — | Reflète l'état de la connexion, avec reprise automatique après une déconnexion |
 
 ### Compatibilité par modèle
@@ -45,7 +44,6 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Courant cellule | ❓ | ❓ | ❓ | ❓ | ✅ |
 | Puissance cellule | ❓ | ❓ | ❓ | ❓ | ✅ |
 | Heures de fonctionnement | ❌ | ❓ | ✅ | ✅ | ❓ |
-| Alarmes cellule | ❌ | ❓ | ✅ | ✅ | ❓ |
 | État de la communication Modbus | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 **Entités en écriture**
@@ -69,7 +67,7 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 
 ### Vous avez un autre modèle, ou pouvez confirmer/infirmer une ligne ❓ ?
 
-Cette intégration s'améliore grâce aux retours de la communauté. Si vous pouvez tester une entité marquée ❓ sur votre modèle (Tension cellule, Courant cellule, Puissance cellule, Heures de fonctionnement, Alarmes cellule, Consigne électrolyse, Réglage taille du bassin, Heure inversion cellule), ou si vous avez découvert un registre Modbus qui n'est pas encore documenté ici, [ouvrez une issue avec le template dédié](../../issues/new?template=contribution.yml) — même un simple "ça marche chez moi aussi" sur un modèle non confirmé est utile.
+Cette intégration s'améliore grâce aux retours de la communauté. Si vous pouvez tester une entité marquée ❓ sur votre modèle (Tension cellule, Courant cellule, Puissance cellule, Heures de fonctionnement, Consigne électrolyse, Réglage taille du bassin, Heure inversion cellule), ou si vous avez découvert un registre Modbus qui n'est pas encore documenté ici, [ouvrez une issue avec le template dédié](../../issues/new?template=contribution.yml) — même un simple "ça marche chez moi aussi" sur un modèle non confirmé est utile.
 
 ## Configuration
 
@@ -147,5 +145,5 @@ Plusieurs registres et fonctionnalités supplémentaires ont ensuite été ident
 - [romain563](https://github.com/romain563/pooltechnologie) — option de configuration ORP
 - Pierre Brdn — consigne électrolyse (Poolsquad UV)
 - [nadlio](https://github.com/nadlio) — modèle Racer, tension/consigne électrolyse sur ce modèle ([issue #4](../../issues/4))
-- [Locodice67](https://github.com/Locodice67) — concentration correcteur pH, réglage taille du bassin, diagnostics cellule (heures de fonctionnement, alarmes, heure d'inversion)
+- [Locodice67](https://github.com/Locodice67) — concentration correcteur pH, réglage taille du bassin, diagnostics cellule (heures de fonctionnement, heure d'inversion)
 - les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres) pour la découverte et la confirmation de nombreux registres et modèles compatibles

@@ -94,18 +94,6 @@
     "binary_sensor": {
       "modbus_status": {
         "name": "État de la communication Modbus"
-      },
-      "alarme_defaut_cellule": {
-        "name": "Alarme défaut cellule"
-      },
-      "alarme_manque_sel": {
-        "name": "Alarme manque de sel"
-      },
-      "alarme_trop_sel": {
-        "name": "Alarme trop de sel"
-      },
-      "alarme_eau_froide": {
-        "name": "Alarme sécurité eau froide"
       }
     },
     "switch": {

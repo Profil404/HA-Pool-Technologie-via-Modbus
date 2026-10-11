@@ -28,7 +28,7 @@ ALL_MODELS = frozenset(MODELS)
 PH_SENSOR_KEYS = {"ph", "consigne_ph"}
 ORP_SENSOR_KEYS = {"orp", "consigne_orp"}
 
-# Diagnostics cellule (alarmes 4172, heures de fonctionnement 4463, inversion 4170).
+# Diagnostics cellule (heures de fonctionnement 4463, inversion 4170).
 # L'iBasel Duo est exclu : l'iBaRegul (boîtier de régulation) ne remonte pas ces
 # données depuis l'iBaSel (boîtier séparé qui pilote la cellule) — cf. tension_cellule.
 CELL_DIAGNOSTICS_CONFIRMED = {"poolsquad_uv", "just_salt_pro"}
