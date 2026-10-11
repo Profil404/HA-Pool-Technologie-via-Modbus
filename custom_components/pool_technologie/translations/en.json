@@ -60,6 +60,15 @@
       },
       "tension_cellule": {
         "name": "Cell voltage"
+      },
+      "courant_cellule": {
+        "name": "Cell current"
+      },
+      "puissance_cellule": {
+        "name": "Cell power"
+      },
+      "heures_fonctionnement": {
+        "name": "Operating hours"
       }
     },
     "number": {
@@ -77,11 +86,26 @@
       },
       "taille_bassin": {
         "name": "Pool size setpoint"
+      },
+      "heure_inversion_cellule": {
+        "name": "Cell inversion time"
       }
     },
     "binary_sensor": {
       "modbus_status": {
         "name": "Modbus communication status"
+      },
+      "alarme_defaut_cellule": {
+        "name": "Cell fault alarm"
+      },
+      "alarme_manque_sel": {
+        "name": "Low salt alarm"
+      },
+      "alarme_trop_sel": {
+        "name": "High salt alarm"
+      },
+      "alarme_eau_froide": {
+        "name": "Cold water safety alarm"
       }
     },
     "switch": {

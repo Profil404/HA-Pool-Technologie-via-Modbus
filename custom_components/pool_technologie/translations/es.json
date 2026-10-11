@@ -60,6 +60,15 @@
       },
       "tension_cellule": {
         "name": "Tensión de la célula"
+      },
+      "courant_cellule": {
+        "name": "Corriente de la célula"
+      },
+      "puissance_cellule": {
+        "name": "Potencia de la célula"
+      },
+      "heures_fonctionnement": {
+        "name": "Horas de funcionamiento"
       }
     },
     "number": {
@@ -77,11 +86,26 @@
       },
       "taille_bassin": {
         "name": "Ajuste del tamaño de la piscina"
+      },
+      "heure_inversion_cellule": {
+        "name": "Tiempo de inversión de célula"
       }
     },
     "binary_sensor": {
       "modbus_status": {
         "name": "Estado de la comunicación Modbus"
+      },
+      "alarme_defaut_cellule": {
+        "name": "Alarma de fallo de célula"
+      },
+      "alarme_manque_sel": {
+        "name": "Alarma de falta de sal"
+      },
+      "alarme_trop_sel": {
+        "name": "Alarma de exceso de sal"
+      },
+      "alarme_eau_froide": {
+        "name": "Alarma de seguridad de agua fría"
       }
     },
     "switch": {

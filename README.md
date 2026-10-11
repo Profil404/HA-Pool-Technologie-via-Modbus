@@ -14,49 +14,62 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | ORP | Capteur | 262 | mV | Mesure de l'ORP |
 | Taille du bassin | Capteur | 4111 | m³ | Volume du bassin configuré sur l'appareil |
 | Tension cellule | Capteur (diagnostic) | 1061 | mV | Tension aux bornes de la cellule d'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
+| Courant cellule | Capteur (diagnostic) | 1062 | mA | Courant traversant la cellule d'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
+| Puissance cellule | Capteur (diagnostic) | 1063 | W | Puissance consommée par la cellule d'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
+| Heures de fonctionnement | Capteur (diagnostic) | 4463 | h | Heures de fonctionnement cumulées de la cellule — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | Consigne pH | Réglage éditable | 4207 | pH | Valeur cible de régulation du pH |
+| Concentration correcteur pH | Réglage éditable | 4208 | % | Concentration du produit correcteur de pH utilisé pour le dosage |
 | Consigne ORP | Réglage éditable | 4235 | mV | Valeur cible de régulation de l'ORP |
 | Consigne électrolyse | Réglage éditable | 4168 | % | Niveau de production de l'électrolyse en régulation manuelle |
+| Réglage taille du bassin | Réglage éditable | 4111 | m³ | Modifie le volume du bassin configuré sur l'appareil |
+| Heure inversion cellule | Réglage éditable | 4170 | h | Fréquence d'inversion de polarité de la cellule |
 | Mode boost | Interrupteur | 4188 / 4182 | — | Active la production maximale pendant 24h |
 | Régulation pH automatique | Interrupteur | 4200 | — | Active/désactive la régulation pH automatique |
+| Alarmes cellule | Capteur binaire (diagnostic) | 4172 (bitmask) | — | Défaut cellule, manque de sel, trop de sel, sécurité eau froide — non disponibles sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | État de la communication Modbus | Diagnostic | — | — | Reflète l'état de la connexion, avec reprise automatique après une déconnexion |
 
 ### Compatibilité par modèle
 
-Les entités en lecture seule sont créées pour tous les modèles. Celles qui n'ont pas encore été confirmées sur votre modèle sont **désactivées par défaut** : elles apparaissent grisées dans la page de l'appareil, et vous pouvez les activer en un clic pour essayer (**Paramètres** > **Appareils & services** > **Pool Technologie** > votre appareil). Une entité désactivée ne génère aucune lecture Modbus.
+**Entités en lecture**
 
-Les réglages modifiables, eux, ne sont créés que sur les modèles où ils ont été confirmés : aucune écriture à l'aveugle dans l'électrolyseur.
-
-| Entité | Ibiza iBasel Duo | WaterAir Salt Gold Duo | Poolsquad UV | Just Salt Pro | RACER⁵ |
+| Entité | Ibiza iBasel Duo | WaterAir Salt Gold Duo | Poolsquad UV | Just Salt Pro | Racer |
 |---|---|---|---|---|---|
-| pH⁴ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| pH² | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Température de l'eau | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Taux de sel | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ORP¹ | ✅ | ✅ | ✅ | ✅ | ❓ |
+| ORP¹ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Taille du bassin | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Tension cellule³ | ❌ | ❓ | ✅ | ❓ | ✅ |
-| Consigne pH⁴ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ❓ |
-| Consigne électrolyse² | ❌ | ❓ | ✅ | ❓ | ✅ |
-| Mode boost | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Régulation pH automatique⁴ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| État de la communication Modbus | ✅ | ✅ | ✅ | ✅ | — |
+| Consigne pH² | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Tension cellule | ❌ | ❓ | ✅ | ❓ | ✅ |
+| Courant cellule | ❓ | ❓ | ❓ | ❓ | ✅ |
+| Puissance cellule | ❓ | ❓ | ❓ | ❓ | ✅ |
+| Heures de fonctionnement | ❌ | ❓ | ✅ | ✅ | ❓ |
+| Alarmes cellule | ❌ | ❓ | ✅ | ✅ | ❓ |
+| État de la communication Modbus | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-✅ Confirmé fonctionnel, entité activée &nbsp;&nbsp;❌ Confirmé non fonctionnel, entité non créée &nbsp;&nbsp;❓ Non testé, entité créée mais **désactivée par défaut** (sauf réglage modifiable, non créé) &nbsp;&nbsp;— Sans objet
+**Entités en écriture**
+
+| Entité | Ibiza iBasel Duo | WaterAir Salt Gold Duo | Poolsquad UV | Just Salt Pro | Racer |
+|---|---|---|---|---|---|
+| Consigne pH² | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Concentration correcteur pH² | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Consigne électrolyse | ❌ | ❓ | ✅ | ❓ | ✅ |
+| Réglage taille du bassin | ❓ | ❓ | ❓ | ✅ | ❓ |
+| Heure inversion cellule | ❌ | ❓ | ✅ | ✅ | ❓ |
+| Mode boost | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Régulation pH automatique² | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+✅ Confirmé fonctionnel, entité créée et activée &nbsp;&nbsp;❓ Non testé sur ce modèle, entité créée mais **désactivée par défaut** (activable en un clic depuis la page de l'appareil, aucune lecture/écriture Modbus tant qu'elle reste désactivée) &nbsp;&nbsp;❌ Confirmé non fonctionnel sur ce modèle, entité non créée
 
 ¹ Créée uniquement si une sonde ORP est déclarée dans la configuration.
 
-² Poolsquad UV uniquement pour l'instant, et seulement si **aucune** sonde ORP n'est déclarée (sans ORP, l'électrolyse n'est pas pilotée automatiquement). Réglage modifiable : non créé sur les modèles marqués ❓ ou ❌ tant que ce n'est pas confirmé.
-
-³ Non disponible sur l'Ibiza iBasel Duo : l'iBaRegul Duo (boîtier de régulation, qui expose le Modbus) ne communique pas cette donnée depuis l'iBaSel (boîtier séparé qui pilote la cellule) — confirmé par test, le registre y lit 0 en permanence.
-
-⁴ Créée uniquement si une sonde pH est déclarée dans la configuration (option cochée par défaut).
-
-⁵ Le RACER n'est pas un modèle sélectionnable dans l'intégration : choisissez un des modèles ci-dessus et décochez la sonde pH. Cette colonne est renseignée d'après les registres lus par [nadlio](https://github.com/nadlio) via ESPHome ([issue #4](../../issues/4)), même plateforme Modbus ; ❓ = registre non lu dans son montage.
+² Créée uniquement si une sonde pH est déclarée dans la configuration.
 
 ### Vous avez un autre modèle, ou pouvez confirmer/infirmer une ligne ❓ ?
 
-Cette intégration s'améliore grâce aux retours de la communauté. Si vous pouvez tester une des entités ci-dessus sur un modèle marqué ❓, ou si vous avez découvert un registre Modbus qui n'est pas encore documenté ici, [ouvrez une issue avec le template dédié](../../issues/new?template=contribution.yml) — même un simple "ça marche chez moi aussi" sur un modèle non confirmé est utile.
+Cette intégration s'améliore grâce aux retours de la communauté. Si vous pouvez tester une entité marquée ❓ sur votre modèle (Tension cellule, Courant cellule, Puissance cellule, Heures de fonctionnement, Alarmes cellule, Consigne électrolyse, Réglage taille du bassin, Heure inversion cellule), ou si vous avez découvert un registre Modbus qui n'est pas encore documenté ici, [ouvrez une issue avec le template dédié](../../issues/new?template=contribution.yml) — même un simple "ça marche chez moi aussi" sur un modèle non confirmé est utile.
 
 ## Configuration
 
@@ -85,6 +98,7 @@ Testé et validé par des utilisateurs avec les modèles d'électrolyseurs suiva
 - [X] WaterAir Salt Gold Duo
 - [X] Poolsquad UV
 - [X] Just Salt Pro
+- [X] Racer (sans pH)
 
 Il est toutefois fort probable que cela fonctionne également avec d'autres modèles Pool Technologie, le mapping Modbus étant identique d'un modèle à l'autre.
 
@@ -132,4 +146,6 @@ Plusieurs registres et fonctionnalités supplémentaires ont ensuite été ident
 - [neopsyko](https://github.com/neopsyko/HA-Pool-Technologie-via-Modbus) — mode boost, synchronisation continue des consignes
 - [romain563](https://github.com/romain563/pooltechnologie) — option de configuration ORP
 - Pierre Brdn — consigne électrolyse (Poolsquad UV)
+- [nadlio](https://github.com/nadlio) — modèle Racer, tension/consigne électrolyse sur ce modèle ([issue #4](../../issues/4))
+- [Locodice67](https://github.com/Locodice67) — concentration correcteur pH, réglage taille du bassin, diagnostics cellule (heures de fonctionnement, alarmes, heure d'inversion)
 - les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres) pour la découverte et la confirmation de nombreux registres et modèles compatibles

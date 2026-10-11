@@ -4,7 +4,13 @@ import logging
 from homeassistant.components.number import NumberEntity
 from homeassistant.const import UnitOfElectricPotential
 
-from .models import MODELS
+from .models import (
+    MODELS,
+    ELECTROLYSIS_SETPOINT,
+    POOL_SIZE_SETPOINT,
+    CELL_INVERSION_HOURS,
+    entity_status,
+)
 from .const import DOMAIN
 from .options_helper import has_ph_probe, has_orp_probe
 
@@ -23,14 +29,37 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         entities.append(PHSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
     if regulation_orp:
         entities.append(ORPSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
-    # Consigne électrolyse : uniquement confirmée sur les modèles qui l'exposent (cf. models.py),
-    # et seulement en régulation manuelle — sans sonde ORP, qui pilote sinon l'électrolyse automatiquement.
-    if MODELS[model_key].get("supports_electrolysis_setpoint") and not regulation_orp:
-        entities.append(ElectrolysisSetpointEntity(hass, handler, controller, config_entry.entry_id, model_label))
-    # Concentration du correcteur pH : réglage lié à la sonde pH.
+    # Consigne électrolyse : non créée sur un modèle confirmé non fonctionnel, créée
+    # désactivée par défaut sur un modèle non testé (cf. models.py) — et seulement en
+    # régulation manuelle : sans sonde ORP, qui pilote sinon l'électrolyse automatiquement.
+    create, enabled_default = entity_status(ELECTROLYSIS_SETPOINT, model_key)
+    if create and not regulation_orp:
+        entities.append(
+            ElectrolysisSetpointEntity(
+                hass, handler, controller, config_entry.entry_id, model_label, enabled_default,
+            )
+        )
+    # Concentration du correcteur pH : même mapping Modbus que Consigne pH (déjà confirmé
+    # sur tous les modèles), réglage lié uniquement à la présence de la sonde pH.
     if has_ph_probe(config_entry):
         entities.append(ConcentrationCorrectorEntity(hass, handler, controller, config_entry.entry_id, model_label))
-    entities.append(PoolSizeEntity(hass, handler, controller, config_entry.entry_id, model_label))
+    # Réglage taille du bassin : même principe confirmed/non-testé (cf. models.py).
+    create, enabled_default = entity_status(POOL_SIZE_SETPOINT, model_key)
+    if create:
+        entities.append(
+            PoolSizeEntity(
+                hass, handler, controller, config_entry.entry_id, model_label, enabled_default,
+            )
+        )
+    # Heure d'inversion de cellule : réservée aux modèles qui exposent les diagnostics
+    # cellule (cf. CELL_INVERSION_HOURS dans models.py), même principe confirmed/non-testé.
+    create, enabled_default = entity_status(CELL_INVERSION_HOURS, model_key)
+    if create:
+        entities.append(
+            CellInversionHoursEntity(
+                hass, handler, controller, config_entry.entry_id, model_label, enabled_default,
+            )
+        )
     async_add_entities(entities)
 
 class ORPSetpointEntity(NumberEntity):
@@ -122,7 +151,7 @@ class ORPSetpointEntity(NumberEntity):
         self.async_write_ha_state()
 
 class ElectrolysisSetpointEntity(NumberEntity):
-    def __init__(self, hass, handler, controller, entry_id, model_label):
+    def __init__(self, hass, handler, controller, entry_id, model_label, enabled_default=True):
         self._hass = hass
         self._handler = handler
         self._controller = controller
@@ -138,6 +167,9 @@ class ElectrolysisSetpointEntity(NumberEntity):
         self._attr_native_unit_of_measurement = "%"
         self._attr_mode = "box"
         self._attr_native_value = 20
+        # Ne s'applique qu'à la première création de l'entité : une entité déjà présente
+        # chez l'utilisateur garde son état activé/désactivé actuel.
+        self._attr_entity_registry_enabled_default = enabled_default
         self._attr_should_poll = False
 
     @property
@@ -376,7 +408,7 @@ class ConcentrationCorrectorEntity(NumberEntity):
         self.async_write_ha_state()
 
 class PoolSizeEntity(NumberEntity):
-    def __init__(self, hass, handler, controller, entry_id, model_label):
+    def __init__(self, hass, handler, controller, entry_id, model_label, enabled_default=True):
         self._hass = hass
         self._handler = handler
         self._controller = controller
@@ -392,6 +424,7 @@ class PoolSizeEntity(NumberEntity):
         self._attr_native_unit_of_measurement = "m³"
         self._attr_mode = "box"
         self._attr_native_value = 30
+        self._attr_entity_registry_enabled_default = enabled_default
         self._attr_should_poll = False
 
     @property
@@ -453,6 +486,91 @@ class PoolSizeEntity(NumberEntity):
         if not verified:
             _LOGGER.warning(
                 "Taille du bassin non confirmée par l'appareil après écriture (%s)", target
+            )
+            return
+
+        self._attr_native_value = target
+        self.async_write_ha_state()
+
+class CellInversionHoursEntity(NumberEntity):
+    def __init__(self, hass, handler, controller, entry_id, model_label, enabled_default=True):
+        self._hass = hass
+        self._handler = handler
+        self._controller = controller
+        self._entry_id = entry_id
+        self._model_label = model_label
+        self._address = 4170
+
+        self._attr_translation_key = "heure_inversion_cellule"
+        self._attr_has_entity_name = True
+        self._attr_entity_category = None
+        self._attr_icon = "mdi:swap-horizontal"
+        self._attr_unique_id = f"{entry_id}_heure_inversion_cellule"
+        self._attr_native_unit_of_measurement = "h"
+        self._attr_mode = "box"
+        self._attr_native_value = 4
+        self._attr_entity_registry_enabled_default = enabled_default
+        self._attr_should_poll = False
+
+    @property
+    def native_min_value(self):
+        return 1
+
+    @property
+    def native_max_value(self):
+        return 24
+
+    @property
+    def native_step(self):
+        return 1
+
+    @property
+    def extra_state_attributes(self):
+        return {"modbus_address": self._address}
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+            "name": self._model_label,
+            "manufacturer": "Pool Technologie",
+            "model": self._model_label,
+        }
+
+    async def async_added_to_hass(self):
+        await self._async_poll_refresh()
+        self._controller.add_poll_listener(self._async_poll_refresh)
+
+    async def async_will_remove_from_hass(self):
+        self._controller.remove_poll_listener(self._async_poll_refresh)
+
+    async def _async_poll_refresh(self) -> bool:
+        result = await self._hass.async_add_executor_job(self._handler.read_register, self._address)
+        if result is None:
+            return False
+        value = int(round(result[0]))
+        if not (self.native_min_value <= value <= self.native_max_value):
+            return False
+        self._attr_native_value = value
+        self.async_write_ha_state()
+        return True
+
+    async def async_set_native_value(self, value: float) -> None:
+        target = int(round(value))
+        ok = await self._hass.async_add_executor_job(
+            self._handler.write_register, self._address, target
+        )
+        if not ok:
+            _LOGGER.warning("Échec d'écriture de l'heure d'inversion cellule (%s)", target)
+            return
+
+        await asyncio.sleep(0.5)
+        verified = await self._hass.async_add_executor_job(
+            self._handler.read_register_verified, self._address, target
+        )
+        if not verified:
+            _LOGGER.warning(
+                "Heure d'inversion cellule non confirmée par l'appareil après écriture (%s)", target
             )
             return
 
