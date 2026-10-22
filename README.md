@@ -1,5 +1,10 @@
 # Pool Technologie – Intégration Home Assistant
 
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
+[![Release](https://img.shields.io/github/v/release/Profil404/HA-Pool-Technologie-via-Modbus)](../../releases/latest)
+
+[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Profil404&repository=HA-Pool-Technologie-via-Modbus&category=integration)
+
 Intégration personnalisée Home Assistant pour les électrolyseurs de la marque Pool Technologie via Modbus TCP.
 
 ## Fonctionnalités
@@ -41,8 +46,8 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Consigne pH² | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Tension cellule | ❌ | ❓ | ✅ | ❓ | ✅ |
-| Courant cellule | ❓ | ❓ | ❓ | ❓ | ✅ |
-| Puissance cellule | ❓ | ❓ | ❓ | ❓ | ✅ |
+| Courant cellule | ❓ | ❓ | ✅ | ❓ | ✅ |
+| Puissance cellule | ❓ | ❓ | ✅ | ❓ | ✅ |
 | Heures de fonctionnement | ❌ | ❓ | ✅ | ✅ | ❓ |
 | État de la communication Modbus | ✅ | ✅ | ✅ | ✅ | ✅ |
 
@@ -54,7 +59,7 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Concentration correcteur pH² | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Consigne électrolyse | ❌ | ❓ | ✅ | ❓ | ✅ |
-| Réglage taille du bassin | ❓ | ❓ | ❓ | ✅ | ❓ |
+| Réglage taille du bassin | ❓ | ❓ | ✅ | ✅ | ❓ |
 | Heure inversion cellule | ❌ | ❓ | ✅ | ✅ | ❓ |
 | Mode boost | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Régulation pH automatique² | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -104,15 +109,17 @@ Il est toutefois fort probable que cela fonctionne également avec d'autres mod�
 
 ### Via HACS (recommandé)
 
-Une demande d'ajout au store officiel HACS est en cours de revue. En attendant, l'intégration s'installe dès maintenant en dépôt personnalisé :
+L'intégration est disponible dans le store officiel HACS, aucun dépôt personnalisé n'est nécessaire.
 
-1. Dans Home Assistant, ouvrez **HACS**
-2. Cliquez sur les **⋮** (en haut à droite) > **Dépôts personnalisés**
-3. Ajoutez l'URL de ce dépôt : `https://github.com/Profil404/HA-Pool-Technologie-via-Modbus`, catégorie **Intégration**
-4. Recherchez **Pool Technologie** dans HACS et installez-la
-5. Redémarrez Home Assistant
-6. Ajoutez l'intégration via **Paramètres** > **Appareils & services** > **Ajouter une intégration**, recherchez **Pool Technologie**
-7. Suivez les indications de configuration
+[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Profil404&repository=HA-Pool-Technologie-via-Modbus&category=integration)
+
+1. Dans Home Assistant, ouvrez **HACS** (ou cliquez sur le bouton ci-dessus)
+2. Recherchez **Pool Technologie** et cliquez sur **Télécharger**
+3. Redémarrez Home Assistant
+4. Ajoutez l'intégration via **Paramètres** > **Appareils & services** > **Ajouter une intégration**, recherchez **Pool Technologie** — ou directement : [![Ajouter l'intégration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=pool_technologie)
+5. Suivez les indications de configuration
+
+> Vous l'aviez installée en dépôt personnalisé avant son arrivée dans le store ? Rien à faire, les mises à jour continuent d'arriver normalement. Vous pouvez retirer l'entrée de **HACS** > **⋮** > **Dépôts personnalisés** si vous le souhaitez.
 
 ### Manuellement
 
@@ -143,7 +150,7 @@ Plusieurs registres et fonctionnalités supplémentaires ont ensuite été ident
 
 - [neopsyko](https://github.com/neopsyko/HA-Pool-Technologie-via-Modbus) — mode boost, synchronisation continue des consignes
 - [romain563](https://github.com/romain563/pooltechnologie) — option de configuration ORP
-- Pierre Brdn — consigne électrolyse (Poolsquad UV)
+- [pierrebaridon63](https://github.com/pierrebaridon63) — consigne électrolyse, courant/puissance cellule et réglage taille du bassin sur Poolsquad UV ([issue #8](../../issues/8))
 - [nadlio](https://github.com/nadlio) — modèle Racer, tension/consigne électrolyse sur ce modèle ([issue #4](../../issues/4))
 - [Locodice67](https://github.com/Locodice67) — concentration correcteur pH, réglage taille du bassin, diagnostics cellule (heures de fonctionnement, heure d'inversion)
 - les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres) pour la découverte et la confirmation de nombreux registres et modèles compatibles
