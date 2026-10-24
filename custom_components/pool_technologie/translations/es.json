@@ -67,6 +67,12 @@
       "puissance_cellule": {
         "name": "Potencia de la célula"
       },
+      "ratio_electrolyse": {
+        "name": "Ratio de electrólisis"
+      },
+      "ratio_uv": {
+        "name": "Ratio UV"
+      },
       "heures_fonctionnement": {
         "name": "Horas de funcionamiento"
       }

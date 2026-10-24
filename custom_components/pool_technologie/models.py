@@ -147,8 +147,8 @@ SENSORS = [
         "entity_category": "diagnostic",
         "min_valid": 0,
         "max_valid": 50000,
-        # Confirmée sur Racer (nadlio, issue #4), même registre que tension_cellule (1061).
-        "confirmed": {"racer"},
+        # Confirmée sur Racer (nadlio, issue #4) et Poolsquad UV (pierrebaridon63, issue #8).
+        "confirmed": {"poolsquad_uv", "racer"},
     },
     {
         "translation_key": "puissance_cellule",
@@ -163,8 +163,37 @@ SENSORS = [
         "min_valid": 0,
         "max_valid": 5000,
         # Confirmée explicitement par nadlio (issue #4) : "la puissance de la cellule du
-        # racer, propre au module racer, valeur juste".
-        "confirmed": {"racer"},
+        # racer, propre au module racer, valeur juste". Confirmée aussi sur Poolsquad UV
+        # (pierrebaridon63, issue #8).
+        "confirmed": {"poolsquad_uv", "racer"},
+    },
+    {
+        "translation_key": "ratio_electrolyse",
+        "unique_id": "ratio_electrolyse",
+        "address": 2051,
+        "unit": "%",
+        "scale": 0.125,
+        "precision": 0,
+        "icon": "mdi:percent",
+        "entity_category": "diagnostic",
+        "min_valid": 0,
+        "max_valid": 100,
+        # Confirmé sur Poolsquad UV (pierrebaridon63, issue #9), valeurs identiques à l'appli.
+        "confirmed": {"poolsquad_uv"},
+    },
+    {
+        "translation_key": "ratio_uv",
+        "unique_id": "ratio_uv",
+        "address": 2050,
+        "unit": "%",
+        "scale": 0.125,
+        "precision": 0,
+        "icon": "mdi:percent",
+        "entity_category": "diagnostic",
+        "min_valid": 0,
+        "max_valid": 100,
+        # Confirmé sur Poolsquad UV (pierrebaridon63, issue #9), valeurs identiques à l'appli.
+        "confirmed": {"poolsquad_uv"},
     },
     {
         "translation_key": "heures_fonctionnement",
@@ -193,9 +222,10 @@ ELECTROLYSIS_SETPOINT = {
     "unsupported": {"ibasel_duo"},
 }
 
-# Confirmée sur Just Salt Pro (Locodice67, PR #5).
+# Confirmée sur Just Salt Pro (Locodice67, PR #5) et Poolsquad UV en écriture
+# (pierrebaridon63, issue #8).
 POOL_SIZE_SETPOINT = {
-    "confirmed": {"just_salt_pro"},
+    "confirmed": {"poolsquad_uv", "just_salt_pro"},
 }
 
 CELL_INVERSION_HOURS = {

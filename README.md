@@ -21,6 +21,8 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Tension cellule | Capteur (diagnostic) | 1061 | mV | Tension aux bornes de la cellule d'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | Courant cellule | Capteur (diagnostic) | 1062 | mA | Courant traversant la cellule d'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | Puissance cellule | Capteur (diagnostic) | 1063 | W | Puissance consommée par la cellule d'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
+| Ratio électrolyse | Capteur (diagnostic) | 2051 | % | Part de fonctionnement de l'électrolyse — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
+| Ratio UV | Capteur (diagnostic) | 2050 | % | Part de fonctionnement du traitement UV — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | Heures de fonctionnement | Capteur (diagnostic) | 4463 | h | Heures de fonctionnement cumulées de la cellule — non disponible sur tous les modèles, voir [Compatibilité par modèle](#compatibilité-par-modèle) |
 | Consigne pH | Réglage éditable | 4207 | pH | Valeur cible de régulation du pH |
 | Concentration correcteur pH | Réglage éditable | 4208 | % | Concentration du produit correcteur de pH utilisé pour le dosage |
@@ -48,6 +50,8 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Tension cellule | ❌ | ❓ | ✅ | ❓ | ✅ |
 | Courant cellule | ❓ | ❓ | ✅ | ❓ | ✅ |
 | Puissance cellule | ❓ | ❓ | ✅ | ❓ | ✅ |
+| Ratio électrolyse | ❓ | ❓ | ✅ | ❓ | ❓ |
+| Ratio UV | ❓ | ❓ | ✅ | ❓ | ❓ |
 | Heures de fonctionnement | ❌ | ❓ | ✅ | ✅ | ❓ |
 | État de la communication Modbus | ✅ | ✅ | ✅ | ✅ | ✅ |
 
@@ -150,7 +154,7 @@ Plusieurs registres et fonctionnalités supplémentaires ont ensuite été ident
 
 - [neopsyko](https://github.com/neopsyko/HA-Pool-Technologie-via-Modbus) — mode boost, synchronisation continue des consignes
 - [romain563](https://github.com/romain563/pooltechnologie) — option de configuration ORP
-- [pierrebaridon63](https://github.com/pierrebaridon63) — consigne électrolyse, courant/puissance cellule et réglage taille du bassin sur Poolsquad UV ([issue #8](../../issues/8))
+- [pierrebaridon63](https://github.com/pierrebaridon63) — consigne électrolyse, courant/puissance cellule, réglage taille du bassin et ratios électrolyse/UV sur Poolsquad UV ([issue #8](../../issues/8), [issue #9](../../issues/9))
 - [nadlio](https://github.com/nadlio) — modèle Racer, tension/consigne électrolyse sur ce modèle ([issue #4](../../issues/4))
 - [Locodice67](https://github.com/Locodice67) — concentration correcteur pH, réglage taille du bassin, diagnostics cellule (heures de fonctionnement, heure d'inversion)
 - les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres) pour la découverte et la confirmation de nombreux registres et modèles compatibles

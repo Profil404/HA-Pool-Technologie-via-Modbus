@@ -1,59 +1,70 @@
+pool_technologie – Version 261024
+	[Nouveauté] Poolsquad UV confirmé - Ratio électrolyse (2051) (#9, merci @pierrebaridon63)
+	[Nouveauté] Poolsquad UV confirmé - Ratio UV (2050) (#9, merci @pierrebaridon63)
+	[Amélioration] Poolsquad UV confirmé - Courant cellule (1062) (#8, merci @pierrebaridon63)
+	[Amélioration] Poolsquad UV confirmé - Puissance cellule (1063) (#8, merci @pierrebaridon63)
+	[Amélioration] Poolsquad UV confirmé - Réglage taille du bassin (4111) (#8, merci @pierrebaridon63)
+	[Amélioration] Les entités confirmées sont créées et activées par défaut uniquement sur les nouvelles installations : les entités déjà présentes gardent leur état actuel (activables en un clic depuis la page de l'appareil)
+
 pool_technologie – Version 261011
-	Nouveau modèle Racer (sans sonde pH), ajouté à la liste déroulante de configuration — jusqu'ici il fallait choisir un autre modèle et décocher la sonde pH à la main. Mapping Modbus confirmé par @nadlio (issue #4) via une config ESPHome indépendante : consigne électrolyse (4168) et tension cellule (1061)
-	Nouveaux capteurs courant cellule (1062) et puissance cellule (1063), confirmés sur Racer par @nadlio (issue #4)
-	Nouveaux réglages concentration du correcteur pH (4208) et taille du bassin (4111), contribués par @Locodice67 (PR #5)
-	Nouveaux diagnostics cellule, contribués par @Locodice67 (PR #6, issue #4) et confirmés sur Poolsquad UV et Just Salt Pro : heures de fonctionnement (4463) et réglage de l'heure d'inversion de polarité (4170). Les 4 alarmes cellule (registre 4172, également proposées dans cette PR) sont laissées de côté pour l'instant, le mapping des bits n'étant pas confirmé (voir issue #4)
-	Les réglages éditables (consigne électrolyse, taille du bassin, heure d'inversion) suivent désormais le même principe confirmé/non-testé/confirmé-non-fonctionnel que les capteurs en lecture, au lieu d'un simple booléen ou d'une création sans condition : non créés sur un modèle confirmé non fonctionnel, créés mais désactivés par défaut sur un modèle non testé, créés et activés sur les modèles confirmés
-	Tableau de compatibilité du README scindé en deux parties (entités en lecture / entités en écriture), simplifié à 3 notes de bas de page (sonde ORP, sonde pH, légende ✅/❓/❌)
+	[Nouveauté] Modèle Racer (sans sonde pH) disponible dans la liste de configuration (#4, merci @nadlio)
+	[Nouveauté] Racer confirmé - Courant cellule (1062) (#4, merci @nadlio)
+	[Nouveauté] Racer confirmé - Puissance cellule (1063) (#4, merci @nadlio)
+	[Nouveauté] Concentration correcteur pH (4208) (#5, merci @Locodice67)
+	[Nouveauté] Réglage taille du bassin (4111), confirmé sur Just Salt Pro (#5, merci @Locodice67)
+	[Nouveauté] Poolsquad UV et Just Salt Pro confirmés - Heures de fonctionnement (4463) (#6, merci @Locodice67)
+	[Nouveauté] Poolsquad UV et Just Salt Pro confirmés - Réglage heure d'inversion cellule (4170) (#6, merci @Locodice67)
+	[Amélioration] Racer confirmé - Tension cellule (1061) (#4, merci @nadlio)
+	[Amélioration] Racer confirmé - Consigne électrolyse (4168) (#4, merci @nadlio)
+	[Amélioration] Les réglages éditables (consigne électrolyse, taille du bassin, heure d'inversion) suivent le même principe que les capteurs : non créés si confirmé non fonctionnel, créés mais désactivés par défaut si non testé, créés et activés si confirmé
+	[Amélioration] README : tableau de compatibilité scindé en entités en lecture / entités en écriture, avec 3 notes de bas de page
+	[Information] Les 4 alarmes cellule (registre 4172) ne sont pas intégrées pour l'instant : mapping des bits non confirmé (#4)
 
 pool_technologie – Version 261001
-	Nouveau format de version basé sur la date de publication (AAMMJJ) au lieu de la numérotation 1.0.x
-	Correction (issue #7) : quand l'électrolyseur ou la passerelle Modbus TCP coupait la connexion (ConnectionResetError, « Connection reset by peer »), le socket mort n'était jamais refermé et toutes les entités restaient indisponibles jusqu'au rechargement de l'intégration. pymodbus considère le client comme connecté tant que l'objet socket existe, même après un RST : la connexion est désormais refermée explicitement sur toute erreur de communication, puis rouverte avec un nouvel essai immédiat de la requête. Ce nouvel essai n'a lieu que si une connexion était établie, pour ne pas doubler les délais quand l'électrolyseur est simplement éteint (arrêt de la pompe la nuit)
-	S'applique aussi aux écritures (consignes, mode boost, régulation pH auto), qui échouaient de la même façon après une coupure
-	Les entités en lecture seule non confirmées sur un modèle sont désormais créées mais désactivées par défaut (activables en un clic depuis la page de l'appareil, sans aucune lecture Modbus tant qu'elles restent désactivées), au lieu d'être activées sans confirmation. Concerne pour l'instant la tension cellule sur WaterAir Salt Gold Duo et Just Salt Pro, pour les nouvelles installations uniquement : les entités déjà présentes gardent leur état actuel. Les réglages modifiables restent réservés aux modèles confirmés
-	Ajout d'une option « Régulation pH (sonde pH installée) » (cochée par défaut, modifiable après coup) : sans sonde pH, les entités pH (mesure, consigne en lecture et en réglage, régulation pH automatique) ne sont plus créées. Permet notamment d'utiliser l'intégration avec un électrolyseur sans pH comme le RACER (issue #4). Les installations existantes ne sont pas affectées
+	[Correctif] Entités indisponibles après une coupure de connexion de l'électrolyseur ou de la passerelle Modbus TCP (« Connection reset by peer ») : la connexion est maintenant refermée puis rouverte automatiquement, y compris pour les écritures (#7)
+	[Nouveauté] Option « Régulation pH (sonde pH installée) », modifiable après coup : sans sonde pH, les entités pH ne sont pas créées, ce qui permet d'utiliser un électrolyseur sans pH comme le Racer (#4)
+	[Amélioration] Les entités en lecture seule non confirmées sur un modèle sont créées mais désactivées par défaut (activables en un clic), pour les nouvelles installations uniquement. Concerne pour l'instant Tension cellule sur WaterAir Salt Gold Duo et Just Salt Pro
+	[Amélioration] Nouveau format de version basé sur la date de publication (AAMMJJ) au lieu de 1.0.x
 
 pool_technologie – Version 1.0.9
-	Correction de la structure du dépôt pour la soumission HACS officielle (retour de Frenck, mainteneur de HACS) : les fichiers de l'intégration sont déplacés dans custom_components/pool_technologie/ au lieu d'être à la racine, et content_in_root est retiré de hacs.json — HACS installe les intégrations depuis ce chemin précis, content_in_root n'étant pas un layout valide pour cette catégorie
-	Simplification du workflow hassfest.yml : l'étape de réarrangement des fichiers n'est plus nécessaire, la structure du dépôt est maintenant directement compatible
+	[Correctif] Structure du dépôt corrigée pour HACS : fichiers de l'intégration déplacés dans custom_components/pool_technologie/ (retour de Frenck, mainteneur HACS)
+	[Amélioration] Workflow hassfest.yml simplifié
 
 pool_technologie – Version 1.0.8
-	Ajout du modèle Just Salt Pro (même mapping Modbus, reverse engineering confirmé par un utilisateur du forum HACF)
-	Les consignes pH et ORP (number.py) sont maintenant rafraîchies à chaque cycle au lieu d'être lues uniquement au démarrage de l'intégration : un changement fait depuis l'application Pool Technologie (ou un autre client Modbus) est désormais répercuté dans Home Assistant sans redémarrage. Les lectures hors plage sont ignorées, la dernière valeur connue est conservée
-	notify_modbus_success/failure n'est plus appelé une fois par capteur mais une seule fois par cycle (au moins une lecture réussie = cycle réussi) : une lecture isolée en échec sur un registre ponctuellement invalide ne fait plus avancer à tort le compteur de déconnexion
-	Seuil de détection de déconnexion abaissé à 3 cycles ratés d'affilée (au lieu de 5), pour compenser le changement ci-dessus et garder un temps de détection comparable à avant
-	Ajout du capteur diagnostic "Tension cellule" (registre 1061), non créé pour le modèle Ibiza iBasel Duo — confirmé indisponible sur cette topologie (l'iBaRegul Duo ne communique pas cette donnée depuis l'iBaSel, registre à 0 en permanence)
-	L'attribut modbus_address (déjà présent sur les capteurs) est désormais aussi exposé sur les entités number (consignes pH/ORP) et switch (mode boost, régulation pH auto)
-	Ajout de la "Consigne électrolyse" (registre 4168, %), réglage éditable disponible uniquement sur Poolsquad UV et seulement en l'absence de sonde ORP (l'électrolyse est sinon pilotée automatiquement) — fonctionnalité confirmée par un utilisateur HACS (Pierre_Brdn)
-	Ajout d'un template d'issue GitHub pour signaler un nouveau registre découvert ou confirmer/infirmer qu'une entité fonctionne sur un modèle donné, et d'un tableau de compatibilité par modèle dans le README (✅/❌/❓) pour orienter les contributions de la communauté
-	Ajout des traductions anglaise et espagnole (translations/en.json, translations/es.json), en plus du français
+	[Nouveauté] Modèle Just Salt Pro disponible
+	[Nouveauté] Tension cellule (1061), non créée sur Ibiza iBasel Duo (registre à 0 en permanence sur ce modèle)
+	[Nouveauté] Consigne électrolyse (4168), Poolsquad UV uniquement et sans sonde ORP (merci Pierre_Brdn)
+	[Nouveauté] Traductions anglaise et espagnole
+	[Amélioration] Consignes pH et ORP rafraîchies à chaque cycle : un changement fait depuis l'appli Pool Technologie est répercuté sans redémarrage
+	[Amélioration] Détection de déconnexion plus fiable : une lecture isolée en échec n'est plus comptée à tort, et le seuil passe à 3 cycles ratés d'affilée
+	[Amélioration] Attribut modbus_address exposé aussi sur les consignes et les interrupteurs
+	[Amélioration] Template d'issue GitHub pour signaler un registre ou confirmer une entité, et tableau de compatibilité par modèle dans le README
 
 pool_technologie – Version 1.0.7
-	Préparation du dépôt pour HACS : ajout de hacs.json, LICENSE, logos de la marque, workflows de validation (HACS action + hassfest)
-	Correction du manifest.json : ajout du champ issue_tracker requis et tri des clés (domain, name, puis ordre alphabétique)
+	[Amélioration] Dépôt préparé pour HACS : hacs.json, LICENSE, logos, workflows de validation (HACS action + hassfest)
+	[Correctif] manifest.json : champ issue_tracker ajouté et clés triées
 
 pool_technologie – Version 1.0.6
-	Ajout d'une entité switch pour activer/désactiver la régulation pH automatique
-	Ajout d'une option de configuration (activable après coup, avec rechargement automatique) pour indiquer si une sonde ORP est installée : sans elle, les entités ORP (capteur, consigne en lecture seule, consigne éditable) ne sont pas créées
-	L'intervalle de rafraîchissement Modbus est maintenant configurable à l'installation et modifiable ensuite dans les options, au lieu d'être fixé en dur à 60s
-	Ajout des modèles WaterAir Salt Gold Duo et Poolsquad UV (confirmés fonctionnels par des utilisateurs du forum HACF, même mapping Modbus que l'Ibiza iBasel Duo)
-	Correction : le switch de mode boost (ajouté en 1.0.5) tentait une lecture Modbus à chaque cycle même électrolyseur déconnecté, provoquant des avertissements de dépassement d'intervalle (timeouts de ~10s)
-	Correction : le switch de mode boost sondait aussi la reconnexion de son côté, ce qui doublait la fréquence réelle des tentatives par rapport à celle voulue
-	Les entités switch (boost, régulation pH auto) sont désormais rafraîchies sur le même cycle que les capteurs (piloté par le controller) plutôt que par leur propre polling natif Home Assistant, pour rester alignées sur l'intervalle configuré et éviter tout sondage dupliqué de la reconnexion
-	Ajout de l'adresse Modbus en attribut de chaque capteur
+	[Nouveauté] Interrupteur Régulation pH automatique
+	[Nouveauté] Option sonde ORP, modifiable après coup : sans sonde, les entités ORP ne sont pas créées
+	[Nouveauté] Intervalle de rafraîchissement configurable (au lieu de 60 s fixe)
+	[Nouveauté] Modèles WaterAir Salt Gold Duo et Poolsquad UV disponibles
+	[Nouveauté] Adresse Modbus en attribut de chaque capteur
+	[Amélioration] Interrupteurs rafraîchis sur le même cycle que les capteurs, pour rester alignés sur l'intervalle configuré
+	[Correctif] Mode boost : lecture Modbus tentée à chaque cycle même électrolyseur déconnecté, provoquant des avertissements de timeout
+	[Correctif] Mode boost : sondage de reconnexion en double
 
 pool_technologie – Version 1.0.5
-	Ajout d'une entité switch pour activer/désactiver le mode boost
-	Les cycles de lecture sont sautés quand l'électrolyseur est déconnecté, avec tentative de reconnexion périodique, au lieu de tenter la lecture à chaque cycle
+	[Nouveauté] Interrupteur Mode boost
+	[Amélioration] Lectures sautées quand l'électrolyseur est déconnecté, avec tentative de reconnexion périodique
 
 pool_technologie – Version 1.0.4
-	Connexion Modbus TCP maintenue ouverte en continu (fin des connexions/déconnexions à chaque lecture ou écriture)
-	Lectures et écritures Modbus déplacées hors de la boucle principale de Home Assistant (thread executor) pour éviter tout blocage de l'interface
-	Ajout d'un verrou d'accès pour sérialiser les échanges Modbus entre les capteurs et les entités number
-	Un seul client Modbus partagé entre les plateformes sensor et number (suppression d'une connexion dupliquée)
-	Confirmation par relecture après chaque écriture de consigne pH ou ORP
-	Filtrage des lectures hors plage physique (pH, température, taux de sel, ORP) pour écarter les valeurs aberrantes
-	Correction d'un bug empêchant le capteur binaire de communication Modbus de refléter l'état réel de la liaison (le rafraîchissement périodique restait figé sur un callback qui ne lisait jamais Modbus)
-	Fermeture propre de la connexion Modbus au déchargement de l'intégration
-	Suppression complète de l'entité de filtration (config_flow, options flow, binary_sensor), non utilisée
-	Ajout des métadonnées iot_class / integration_type dans le manifest
+	[Amélioration] Connexion Modbus TCP maintenue ouverte en continu
+	[Amélioration] Lectures et écritures Modbus hors de la boucle principale de Home Assistant (plus de blocage de l'interface)
+	[Amélioration] Un seul client Modbus partagé, avec verrou d'accès pour sérialiser les échanges
+	[Amélioration] Relecture de confirmation après chaque écriture de consigne pH ou ORP
+	[Amélioration] Lectures hors plage physique ignorées (pH, température, taux de sel, ORP)
+	[Amélioration] Fermeture propre de la connexion au déchargement de l'intégration
+	[Amélioration] Métadonnées iot_class / integration_type ajoutées au manifest
+	[Amélioration] Entité de filtration supprimée (non utilisée)
+	[Correctif] Le capteur binaire de communication Modbus ne reflétait pas l'état réel de la liaison
