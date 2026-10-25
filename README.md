@@ -89,7 +89,13 @@ Lors de l'ajout de l'intégration, vous renseignez :
 - La présence ou non d'une sonde ORP (masque les entités ORP si absente)
 - L'intervalle de rafraîchissement des données (en secondes)
 
+L'assistant vérifie que l'électrolyseur répond avant de créer l'entrée : il doit donc être sous tension (pompe en marche) au moment de l'ajout.
+
 La présence des sondes et l'intervalle restent modifiables après coup, sans réinstaller l'intégration, via **Paramètres** > **Appareils & services** > **Pool Technologie** > **Configurer**.
+
+### Connexion Modbus
+
+L'intégration n'ouvre pas sa propre connexion : elle passe par l'intégration Modbus de Home Assistant, qui la partage avec les autres intégrations joignant la même passerelle par ce biais. Après une coupure de l'électrolyseur ou de la passerelle, la liaison est rouverte d'elle-même au cycle suivant, sans recharger l'intégration. Pendant une coupure, les entités gardent leur dernière valeur, et « État de la communication Modbus » passe à off après 3 cycles ratés d'affilée.
 
 ## Matériel nécessaire
 
@@ -110,6 +116,8 @@ Testé et validé par des utilisateurs avec les modèles d'électrolyseurs suiva
 Il est toutefois fort probable que cela fonctionne également avec d'autres modèles Pool Technologie, le mapping Modbus étant identique d'un modèle à l'autre.
 
 ## Installation
+
+Prérequis : **Home Assistant 2026.10.1** ou plus récent.
 
 ### Via HACS (recommandé)
 
