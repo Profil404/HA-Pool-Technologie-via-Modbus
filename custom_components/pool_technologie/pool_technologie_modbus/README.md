@@ -66,7 +66,7 @@ Tous les registres sont des holding registers 16 bits **non signés** (FC03 en l
 
 `ReportedSetpoints` et `Setpoints` décrivent les mêmes registres sous deux angles : la valeur rapportée avec ses bornes physiques, et le réglage avec ses bornes de réglage. Choisis ensemble, ils ne coûtent qu'une requête par adresse.
 
-Le mode boost s'active en écrivant la durée (1440 min) puis le drapeau (256), et s'arrête en remettant la durée à 0 sans toucher au drapeau. Seule la durée est relue.
+Le mode boost s'active en écrivant la durée (1440 min) puis le drapeau (256), et s'arrête en remettant la durée à 0 : le drapeau retombe alors à 0 de lui-même (observé sur un Just Salt Pro). Seule la durée est relue.
 
 ## Statut par modèle
 
@@ -90,6 +90,13 @@ Ces regroupements réduiraient le nombre de requêtes par cycle (18 aujourd'hui 
 | 4207 – 4208 (consigne pH, concentration) | 2 → 1 | idem |
 | 4168 – 4170 (consigne électrolyse, inversion) | 2 → 1 | traverse 4169, non documenté |
 | 4182 – 4200 (boost, régulation pH) | 2 → 1 | traverse 4183 – 4187 et 4189 – 4199, non documentés |
+
+Un relevé fait sur un seul Just Salt Pro ([fork de neopsyko](https://github.com/neopsyko/HA-Pool-Technologie-via-Modbus), `CLAUDE.md`) donne deux indices :
+
+- seule la fonction FC03 est acceptée, FC01, FC02 et FC04 répondent « fonction illégale » ;
+- les plages 0 – 49, 259 – 268, 512 – 527 et 4096 – 4270 répondent, ce qui rend plausibles les regroupements 259 – 262, 4168 – 4170, 4182 – 4200 et 4207 – 4208.
+
+Ce relevé est incomplet : 1061 – 1063, 2050 – 2051 et 4463, confirmés sur d'autres modèles, n'y figurent pas. Il ne dispense donc pas des essais.
 
 ## Exceptions
 

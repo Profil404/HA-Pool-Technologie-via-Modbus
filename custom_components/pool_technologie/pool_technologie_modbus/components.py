@@ -72,9 +72,10 @@ class Controls(Component):
 
     register_ranges = ((4182, 4182), (4188, 4188), (4200, 4200))
 
-    # Minutes de boost restantes ; jamais remis à zéro par le drapeau.
+    # Minutes de boost restantes (0 = arrêté) : le registre qui commande le boost.
     boost_remaining = register(4188, unit="min", writable=True)
-    # Drapeau d'activation du boost : écrit à l'activation, jamais lu.
+    # Drapeau d'activation du boost (256), écrit à l'activation et jamais lu. Il
+    # retombe à 0 de lui-même quand 4188 revient à 0 (observé sur un Just Salt Pro).
     boost_flag = register(4182, writable=True)
     ph_regulation = register(4200, writable=True)
 
