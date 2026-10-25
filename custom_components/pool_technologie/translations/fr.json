@@ -17,7 +17,8 @@
     },
     "error": {
       "cannot_connect": "Impossible de se connecter au serveur Modbus TCP/IP",
-      "invalid_host": "Adresse IP invalide"
+      "invalid_host": "Adresse IP invalide",
+      "link_conflict": "Cette passerelle est déjà utilisée par Home Assistant avec d’autres paramètres de liaison"
     },
     "abort": {
       "already_configured": "Cet électrolyseur est déjà configuré"
