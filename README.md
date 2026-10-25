@@ -83,7 +83,7 @@ Cette intégration s'améliore grâce aux retours de la communauté. Si vous pou
 Lors de l'ajout de l'intégration, vous renseignez :
 
 - L'adresse IP et le port de votre convertisseur Modbus TCP/IP
-- L'adresse Modbus de l'électrolyseur
+- L'adresse Modbus de l'électrolyseur : reprenez le réglage « AD » de l'électrolyseur (certains appareils sont réglés sur 10 et non sur 1)
 - Le modèle de votre électrolyseur (voir la liste ci-dessous)
 - La présence ou non d'une sonde pH (masque les entités pH si absente)
 - La présence ou non d'une sonde ORP (masque les entités ORP si absente)
