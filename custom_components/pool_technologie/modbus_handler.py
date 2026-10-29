@@ -1,10 +1,17 @@
 import logging
 import threading
+from contextlib import contextmanager
 
 from pymodbus.client import ModbusTcpClient
-from pymodbus.exceptions import ModbusException
+from pymodbus.exceptions import ConnectionException, ModbusException
 
 _LOGGER = logging.getLogger(__name__)
+
+# Attente maximale du verrou avant d'abandonner une requête. Sans cette limite,
+# quand l'appareil est injoignable, chaque requête en attente bloque un thread
+# de l'executor de HA pendant que la précédente subit ses timeouts : les threads
+# s'accumulent jusqu'à saturer l'executor et figer HA.
+LOCK_TIMEOUT = 10
 
 
 class ModbusHandler:
@@ -21,21 +28,55 @@ class ModbusHandler:
         self.host = host
         self.port = port
         self.unit_id = unit_id
-        self._client = ModbusTcpClient(host=self.host, port=self.port, timeout=timeout)
+        # retries=0 : pymodbus réessaie sinon 3 fois en interne, soit jusqu'à 4 timeouts
+        # par lecture quand l'appareil ne répond pas. Le seul nouvel essai utile
+        # (socket périmé) est déjà géré par _execute.
+        self._client = ModbusTcpClient(
+            host=self.host, port=self.port, timeout=timeout, retries=0
+        )
         self._lock = threading.Lock()
+
+    @property
+    def connected(self) -> bool:
+        """False après un échec de connexion ou de communication (_execute ferme
+        alors le socket). Permet à l'appelant d'abandonner son cycle de lectures
+        au lieu d'enchaîner un timeout par registre."""
+        return self._client.connected
+
+    @contextmanager
+    def _locked(self):
+        """Prend le verrou avec un délai maximal ; lève TimeoutError sinon."""
+        if not self._lock.acquire(timeout=LOCK_TIMEOUT):
+            raise TimeoutError("verrou Modbus occupé depuis plus de %s s" % LOCK_TIMEOUT)
+        try:
+            yield
+        finally:
+            self._lock.release()
 
     def connect(self):
         """Open the persistent connection. Safe to call repeatedly/on startup."""
-        with self._lock:
-            self._ensure_connected()
+        try:
+            with self._locked():
+                self._ensure_connected()
+        except Exception as err:
+            _LOGGER.debug("Modbus connect exception: %s", err)
 
     def close(self):
-        with self._lock:
+        # Au déchargement, on ferme même si une requête tient encore le verrou :
+        # fermer le socket débloque justement cette requête.
+        acquired = self._lock.acquire(timeout=LOCK_TIMEOUT)
+        try:
             self._client.close()
+        finally:
+            if acquired:
+                self._lock.release()
 
     def _ensure_connected(self):
         if not self._client.connected:
-            self._client.connect()
+            # connect() renvoie False sans lever d'exception si l'appareil est
+            # injoignable : on lève nous-mêmes pour ne pas tenter la requête.
+            if not self._client.connect():
+                raise ConnectionException(f"{self.host}:{self.port} injoignable")
 
     def _execute(self, method, address, **kwargs):
         """Exécute une requête Modbus, avec une reconnexion + un nouvel essai si
@@ -73,34 +114,34 @@ class ModbusHandler:
                 )
 
     def read_register(self, address, count=1):
-        with self._lock:
-            try:
+        try:
+            with self._locked():
                 result = self._execute("read_holding_registers", address, count=count)
                 if result.isError():
                     _LOGGER.debug("Modbus read error at %s: %s", address, result)
                     return None
                 return result.registers
-            except Exception as err:
-                _LOGGER.debug("Modbus read exception at %s: %s", address, err)
-                return None
+        except Exception as err:
+            _LOGGER.debug("Modbus read exception at %s: %s", address, err)
+            return None
 
     def write_register(self, address, value):
-        with self._lock:
-            try:
+        try:
+            with self._locked():
                 result = self._execute("write_register", address, value=value)
                 return not result.isError()
-            except Exception as err:
-                _LOGGER.debug("Modbus write exception at %s: %s", address, err)
-                return False
+        except Exception as err:
+            _LOGGER.debug("Modbus write exception at %s: %s", address, err)
+            return False
 
     def write_registers(self, address, values):
-        with self._lock:
-            try:
+        try:
+            with self._locked():
                 result = self._execute("write_registers", address, values=values)
                 return not result.isError()
-            except Exception as err:
-                _LOGGER.debug("Modbus write exception at %s: %s", address, err)
-                return False
+        except Exception as err:
+            _LOGGER.debug("Modbus write exception at %s: %s", address, err)
+            return False
 
     def read_register_verified(self, address, expected_value, count=1, tolerance=0):
         """Read a register back after a write to confirm it was actually applied.

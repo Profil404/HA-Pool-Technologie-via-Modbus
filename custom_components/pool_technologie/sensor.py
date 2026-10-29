@@ -38,9 +38,26 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     async_add_entities(sensors)
 
+    # Un seul cycle à la fois : async_track_time_interval relance update_sensors à
+    # chaque intervalle sans attendre la fin du précédent. Appareil éteint, un cycle
+    # peut durer plus longtemps que l'intervalle ; sans ce garde-fou, les cycles se
+    # chevauchent et leurs threads s'empilent sur le verrou du handler.
+    cycle_running = False
+
     async def update_sensors(now):
+        nonlocal cycle_running
+        if cycle_running:
+            _LOGGER.debug("Cycle Modbus précédent toujours en cours, cycle ignoré")
+            return
         if controller.should_skip_poll():
             return
+        cycle_running = True
+        try:
+            await _update_cycle()
+        finally:
+            cycle_running = False
+
+    async def _update_cycle():
         any_success = False
         for sensor in sensors:
             # Entité désactivée (par défaut ou par l'utilisateur) : jamais ajoutée à HA,
@@ -53,6 +70,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             if ok:
                 any_success = True
             sensor.async_write_ha_state()
+            # Échec de connexion (appareil éteint, pompe arrêtée) : inutile d'enchaîner
+            # un timeout par capteur, ni d'interroger les autres plateformes. On compte
+            # tout de suite un échec pour que le backoff du controller s'applique.
+            if not ok and not handler.connected:
+                _LOGGER.debug("Pool Technologie injoignable, cycle de lecture abandonné")
+                controller.notify_modbus_failure()
+                return
         # Rafraîchit les entités d'autres plateformes (switch.py, number.py, binary_sensor.py)
         # sur le même cycle, au lieu de les laisser gérer leur propre polling natif HA.
         for poll_listener in list(controller._poll_listeners):
