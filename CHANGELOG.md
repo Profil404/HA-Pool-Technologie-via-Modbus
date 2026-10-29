@@ -1,3 +1,6 @@
+pool_technologie – Version 261029
+	[Correctif] Home Assistant se figeait quand l'électrolyseur était injoignable (pompe arrêtée) : les cycles de lecture s'empilaient et saturaient les threads. Un seul cycle tourne désormais à la fois, le cycle est abandonné dès la première lecture en échec de connexion, et l'attente du verrou Modbus est limitée à 10 s (#12, merci @cedricrosse)
+
 pool_technologie – Version 261024
 	[Nouveauté] Poolsquad UV confirmé - Ratio électrolyse (2051) (#9, merci @pierrebaridon63)
 	[Nouveauté] Poolsquad UV confirmé - Ratio UV (2050) (#9, merci @pierrebaridon63)
@@ -5,6 +8,7 @@ pool_technologie – Version 261024
 	[Amélioration] Poolsquad UV confirmé - Puissance cellule (1063) (#8, merci @pierrebaridon63)
 	[Amélioration] Poolsquad UV confirmé - Réglage taille du bassin (4111) (#8, merci @pierrebaridon63)
 	[Amélioration] Les entités confirmées sont créées et activées par défaut uniquement sur les nouvelles installations : les entités déjà présentes gardent leur état actuel (activables en un clic depuis la page de l'appareil)
+	[Amélioration] 🎉 L'intégration est maintenant disponible dans le store officiel HACS : README mis à jour (badges, installation sans dépôt personnalisé)
 
 pool_technologie – Version 261011
 	[Nouveauté] Modèle Racer (sans sonde pH) disponible dans la liste de configuration (#4, merci @nadlio)
