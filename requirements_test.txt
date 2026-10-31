@@ -1,0 +1,10 @@
+# Home Assistant 2026.10.1 (version minimale de l'intégration) et ses outils de test.
+pytest-homeassistant-custom-component==0.13.372
+# Version livrée par le modbus de Home Assistant 2026.10.1.
+modbus-connection[tmodbus]==4.12.4
+# Le modbus de Home Assistant, dont l'intégration dépend, importe pymodbus ;
+# Home Assistant l'installe avec lui, pas le paquet homeassistant.
+pymodbus==3.13.1
+pytest-cov
+ruff
+mypy
