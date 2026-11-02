@@ -21,6 +21,7 @@ from modbus_connection import (
     ModbusTcpParams,
     ModbusTlsParams,
 )
+from modbus_connection.mock import MockModbusUnit
 import pytest
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
@@ -109,6 +110,43 @@ async def test_setup_does_not_wait_for_first_read(
         release.set()
         await hass.async_block_till_done(wait_background_tasks=True)
     assert state(hass, PH) == "7.2"
+
+
+async def test_entities_do_not_read_when_added(
+    hass: HomeAssistant, fake_modbus: FakeModbus
+) -> None:
+    """Électrolyseur muet : aucune entité, réglages et interrupteurs compris, ne
+    le lit en s'ajoutant ; seule la première lecture de fond l'interroge
+    (#12, correctif de la 261102)."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data=entry_data(regulation_orp=True),
+        entry_id="01SILENT",
+        title="Poolsquad UV",
+    )
+    reads: list[int] = []
+    release = asyncio.Event()
+
+    async def silent(self: MockModbusUnit, register_type: Any, address: int, count: int) -> None:
+        reads.append(address)
+        await release.wait()
+        raise ModbusTimeoutError("pas de réponse")
+
+    with patch.object(MockModbusUnit, "_dispatch_read", silent):
+        entry.add_to_hass(hass)
+        # Une lecture au démarrage resterait suspendue : le setup se figerait.
+        async with asyncio.timeout(5):
+            assert await hass.config_entries.async_setup(entry.entry_id)
+            await hass.async_block_till_done()
+        assert entry.state is ConfigEntryState.LOADED
+        assert hass.states.get(ORP_SETPOINT) is not None
+        assert hass.states.get(BOOST) is not None
+        # Un seul cycle à la fois, arrêté sur sa première lecture sans réponse.
+        assert len(reads) == 1
+        release.set()
+        await hass.async_block_till_done(wait_background_tasks=True)
+    assert len(reads) == 1
+    assert state(hass, STATUS) == STATE_OFF
 
 
 async def test_reload(
