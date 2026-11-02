@@ -1,3 +1,6 @@
+pool_technologie – Version 261102
+	[Correctif] Home Assistant pouvait encore se figer au démarrage quand l'électrolyseur était injoignable : les entités de réglage et les interrupteurs ne font plus de lecture initiale tant que la connexion de départ n'a pas réussi, leur valeur est rafraîchie au premier cycle réussi (#12, merci @cedricrosse)
+
 pool_technologie – Version 261029
 	[Correctif] Home Assistant se figeait quand l'électrolyseur était injoignable (pompe arrêtée) : les cycles de lecture s'empilaient et saturaient les threads. Un seul cycle tourne désormais à la fois, le cycle est abandonné dès la première lecture en échec de connexion, et l'attente du verrou Modbus est limitée à 10 s (#12, merci @cedricrosse)
 
