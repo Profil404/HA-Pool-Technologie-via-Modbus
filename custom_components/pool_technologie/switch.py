@@ -57,7 +57,11 @@ class BoostSwitch(SwitchEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
@@ -148,7 +152,11 @@ class PHAutoSwitch(SwitchEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):

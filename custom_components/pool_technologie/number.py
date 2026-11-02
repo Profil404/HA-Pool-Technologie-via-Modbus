@@ -109,7 +109,11 @@ class ORPSetpointEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
@@ -198,7 +202,11 @@ class ElectrolysisSetpointEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
@@ -283,7 +291,11 @@ class PHSetpointEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
@@ -368,7 +380,11 @@ class ConcentrationCorrectorEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
@@ -453,7 +469,11 @@ class PoolSizeEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
@@ -538,7 +558,11 @@ class CellInversionHoursEntity(NumberEntity):
         }
 
     async def async_added_to_hass(self):
-        await self._async_poll_refresh()
+        # Lecture initiale seulement si l'appareil a répondu à la connexion de départ :
+        # pompe arrêtée, chaque lecture attendrait son timeout et bloquerait le démarrage
+        # de HA. Le premier cycle du controller rafraîchira la valeur de toute façon.
+        if self._handler.connected:
+            await self._async_poll_refresh()
         self._controller.add_poll_listener(self._async_poll_refresh)
 
     async def async_will_remove_from_hass(self):
