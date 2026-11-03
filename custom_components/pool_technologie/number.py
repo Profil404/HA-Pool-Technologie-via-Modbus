@@ -1,6 +1,6 @@
 import logging
 
-from homeassistant.components.number import NumberEntity
+from homeassistant.components.number import NumberEntity, RestoreNumber
 from homeassistant.const import UnitOfElectricPotential
 from homeassistant.core import callback
 from modbus_connection import ModbusError
@@ -112,7 +112,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(entities)
 
 
-class PoolNumber(PoolTechnologieEntity, NumberEntity):
+class PoolNumber(PoolTechnologieEntity, RestoreNumber, NumberEntity):
     def __init__(self, coordinator, key, description, enabled_default=True):
         super().__init__(coordinator, description["field"])
         self._description = description
@@ -131,6 +131,14 @@ class PoolNumber(PoolTechnologieEntity, NumberEntity):
         # Ne s'applique qu'à la première création de l'entité : une entité déjà présente
         # chez l'utilisateur garde son état activé/désactivé actuel.
         self._attr_entity_registry_enabled_default = enabled_default
+
+    async def async_added_to_hass(self):
+        await super().async_added_to_hass()
+        # Appareil éteint au démarrage : on affiche le dernier réglage connu plutôt
+        # que la valeur initiale, jusqu'à la première lecture réussie.
+        if self._value is None and (last := await self.async_get_last_number_data()):
+            if last.native_value is not None:
+                self._attr_native_value = last.native_value
 
     @callback
     def _handle_coordinator_update(self):

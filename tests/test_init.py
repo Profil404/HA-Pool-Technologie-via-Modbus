@@ -27,6 +27,7 @@ from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     async_fire_time_changed,
     mock_restore_cache,
+    mock_restore_cache_with_extra_data,
 )
 
 from custom_components.pool_technologie.const import DOMAIN
@@ -40,6 +41,7 @@ SALT = "sensor.poolsquad_uv_salt_level"
 TEMPERATURE = "sensor.poolsquad_uv_water_temperature"
 ORP_SETPOINT = "number.poolsquad_uv_ph_setpoint"
 BOOST = "switch.poolsquad_uv_boost_mode"
+PH_AUTO = "switch.poolsquad_uv_automatic_ph_regulation"
 STATUS = "binary_sensor.poolsquad_uv_modbus_communication_status"
 
 
@@ -220,7 +222,7 @@ async def test_device_off_at_startup(
 
     assert config_entry.state is ConfigEntryState.LOADED
     assert state(hass, PH) == "7.1"  # dernière valeur restaurée
-    assert state(hass, ORP_SETPOINT) == "7.2"  # valeur initiale
+    assert state(hass, ORP_SETPOINT) == "7.2"  # rien à restaurer : valeur initiale
     assert state(hass, STATUS) == STATE_OFF
 
     fake_modbus.fail(None)
@@ -404,3 +406,50 @@ async def test_non_numeric_restored_state_is_ignored(
     fake_modbus.fail(ModbusConnectionError("injoignable"))
     await setup(hass, config_entry)
     assert state(hass, PH) == "unknown"
+
+
+async def test_device_off_at_startup_restores_settings_and_switches(
+    hass: HomeAssistant,
+    fake_modbus: FakeModbus,
+    config_entry: MockConfigEntry,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Appareil éteint au démarrage : réglages et interrupteurs gardent leur dernier état."""
+    mock_restore_cache_with_extra_data(
+        hass,
+        [
+            (
+                State(ORP_SETPOINT, "7.4"),
+                {
+                    "native_max_value": 8.5,
+                    "native_min_value": 6.5,
+                    "native_step": 0.1,
+                    "native_unit_of_measurement": "pH",
+                    "native_value": 7.4,
+                },
+            ),
+            (State(PH_AUTO, STATE_ON), {}),
+            (State(BOOST, STATE_ON), {}),
+        ],
+    )
+    fake_modbus.fail(ModbusConnectionError("injoignable"))
+    await setup(hass, config_entry)
+
+    assert state(hass, ORP_SETPOINT) == "7.4"  # et non la valeur initiale 7.2
+    assert state(hass, PH_AUTO) == STATE_ON
+    assert state(hass, BOOST) == STATE_ON
+
+    # Au retour de l'appareil, les valeurs lues remplacent les valeurs restaurées.
+    fake_modbus.fail(None)
+    await next_cycle(hass, freezer)
+    assert state(hass, ORP_SETPOINT) == "7.2"
+    assert state(hass, BOOST) == STATE_OFF
+
+
+async def test_unusable_restored_switch_state_is_ignored(
+    hass: HomeAssistant, fake_modbus: FakeModbus, config_entry: MockConfigEntry
+) -> None:
+    mock_restore_cache(hass, [State(PH_AUTO, STATE_UNAVAILABLE)])
+    fake_modbus.fail(ModbusConnectionError("injoignable"))
+    await setup(hass, config_entry)
+    assert state(hass, PH_AUTO) == STATE_OFF
