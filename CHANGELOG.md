@@ -1,3 +1,6 @@
+pool_technologie – Version à venir (numéro à définir par le mainteneur)
+	[Correctif] L'intervalle de rafraîchissement doit valoir au moins 1 seconde : à 0, l'électrolyseur n'était plus relu après la première lecture ; en négatif, il était interrogé en continu. Une valeur invalide déjà enregistrée est remplacée par 60 secondes, avec un avertissement dans le journal
+
 pool_technologie – Version 261105
 	[Information] Home Assistant 2026.10.1 minimum requis
 	[Amélioration] Connexion Modbus confiée à Home Assistant (async_get_unit) : l'intégration n'ouvre plus son propre client et ne dépend plus de pymodbus. Plus de threads ni de verrou : Home Assistant ne peut plus se figer quand l'électrolyseur est injoignable (#12, refonte par @chpego)

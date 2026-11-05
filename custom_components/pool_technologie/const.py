@@ -8,3 +8,4 @@ CONF_REGULATION_ORP = "regulation_orp"
 CONF_SONDE_PH = "sonde_ph"
 CONF_SCAN_INTERVAL = "scan_interval"
 SCAN_INTERVAL = 60
+MIN_SCAN_INTERVAL = 1

@@ -13,6 +13,7 @@ from .const import (
     CONF_REGULATION_ORP,
     CONF_SONDE_PH,
     CONF_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
     SCAN_INTERVAL,
 )
 from .models import MODELS
@@ -72,7 +73,9 @@ class PoolTechnologieConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Required(CONF_MODEL): vol.In({k: v["name"] for k, v in MODELS.items()}),
             vol.Required(CONF_SONDE_PH, default=True): bool,
             vol.Required(CONF_REGULATION_ORP, default=False): bool,
-            vol.Required(CONF_SCAN_INTERVAL, default=SCAN_INTERVAL): int,
+            vol.Required(CONF_SCAN_INTERVAL, default=SCAN_INTERVAL): vol.All(
+                int, vol.Range(min=MIN_SCAN_INTERVAL)
+            ),
         })
 
         return self.async_show_form(
@@ -111,7 +114,7 @@ class PoolTechnologieOptionsFlow(config_entries.OptionsFlow):
                 default=entry.options.get(
                     CONF_SCAN_INTERVAL, entry.data.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
                 ),
-            ): int,
+            ): vol.All(int, vol.Range(min=MIN_SCAN_INTERVAL)),
         })
 
         return self.async_show_form(step_id="init", data_schema=schema)

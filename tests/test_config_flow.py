@@ -137,3 +137,43 @@ async def test_options_flow(
     assert ph is not None and ph.state == STATE_UNAVAILABLE and ph.attributes["restored"]
     orp = hass.states.get("sensor.poolsquad_uv_orp")
     assert orp is not None and orp.state == "700"
+
+
+@pytest.mark.parametrize("interval", [0, -1])
+async def test_user_flow_rejects_invalid_interval(
+    hass: HomeAssistant, fake_modbus: FakeModbus, interval: int
+) -> None:
+    result = await start(hass)
+    with pytest.raises(InvalidData):
+        await hass.config_entries.flow.async_configure(
+            result["flow_id"], {**USER_INPUT, "scan_interval": interval}
+        )
+
+
+@pytest.mark.parametrize("interval", [0, -1])
+async def test_options_flow_rejects_invalid_interval(
+    hass: HomeAssistant, fake_modbus: FakeModbus, config_entry: MockConfigEntry, interval: int
+) -> None:
+    config_entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+    with pytest.raises(InvalidData):
+        await hass.config_entries.options.async_configure(
+            result["flow_id"],
+            {"sonde_ph": True, "regulation_orp": False, "scan_interval": interval},
+        )
+
+
+async def test_user_flow_accepts_minimum_interval(
+    hass: HomeAssistant, fake_modbus: FakeModbus
+) -> None:
+    result = await start(hass)
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {**USER_INPUT, "scan_interval": 1}
+    )
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"]["scan_interval"] == 1
