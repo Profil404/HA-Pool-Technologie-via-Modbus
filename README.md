@@ -119,13 +119,15 @@ Il est toutefois fort probable que cela fonctionne également avec d'autres mod�
 
 Prérequis : **Home Assistant 2026.10.1** ou plus récent.
 
-### Via HACS (recommandé)
+### Via le Marketplace Home Assistant (recommandé)
 
 L'intégration est disponible dans le store officiel HACS, aucun dépôt personnalisé n'est nécessaire.
 
+Depuis Home Assistant 2026.11, HACS est intégré nativement et s'appelle **Marketplace** : il n'y a plus rien à installer au préalable. Sous Home Assistant 2026.10, HACS reste à [installer séparément](https://hacs.xyz).
+
 [![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Profil404&repository=HA-Pool-Technologie-via-Modbus&category=integration)
 
-1. Dans Home Assistant, ouvrez **HACS** (ou cliquez sur le bouton ci-dessus)
+1. Dans Home Assistant, ouvrez le **Marketplace** (ou **HACS** sous Home Assistant 2026.10), ou cliquez sur le bouton ci-dessus
 2. Recherchez **Pool Technologie** et cliquez sur **Télécharger**
 3. Redémarrez Home Assistant
 4. Ajoutez l'intégration via **Paramètres** > **Appareils & services** > **Ajouter une intégration**, recherchez **Pool Technologie** — ou directement : [![Ajouter l'intégration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=pool_technologie)
