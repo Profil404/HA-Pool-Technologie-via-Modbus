@@ -1,4 +1,4 @@
-import voluptuous as vol
+import probatio
 from homeassistant import config_entries
 from homeassistant.components.modbus import async_get_temporary_unit
 from homeassistant.core import callback
@@ -66,15 +66,21 @@ class PoolTechnologieConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     }
                 )
 
-        schema = vol.Schema({
-            vol.Required(CONF_HOST): str,
-            vol.Required(CONF_PORT, default=502): vol.All(int, vol.Range(min=1, max=65535)),
-            vol.Required(CONF_UNIT_ID, default=1): vol.All(int, vol.Range(min=0, max=255)),
-            vol.Required(CONF_MODEL): vol.In({k: v["name"] for k, v in MODELS.items()}),
-            vol.Required(CONF_SONDE_PH, default=True): bool,
-            vol.Required(CONF_REGULATION_ORP, default=False): bool,
-            vol.Required(CONF_SCAN_INTERVAL, default=SCAN_INTERVAL): vol.All(
-                int, vol.Range(min=MIN_SCAN_INTERVAL)
+        schema = probatio.Schema({
+            probatio.Required(CONF_HOST): str,
+            probatio.Required(CONF_PORT, default=502): probatio.All(
+                int, probatio.Range(min=1, max=65535)
+            ),
+            probatio.Required(CONF_UNIT_ID, default=1): probatio.All(
+                int, probatio.Range(min=0, max=255)
+            ),
+            probatio.Required(CONF_MODEL): probatio.In(
+                {k: v["name"] for k, v in MODELS.items()}
+            ),
+            probatio.Required(CONF_SONDE_PH, default=True): bool,
+            probatio.Required(CONF_REGULATION_ORP, default=False): bool,
+            probatio.Required(CONF_SCAN_INTERVAL, default=SCAN_INTERVAL): probatio.All(
+                int, probatio.Range(min=MIN_SCAN_INTERVAL)
             ),
         })
 
@@ -96,25 +102,25 @@ class PoolTechnologieOptionsFlow(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         entry = self.config_entry
-        schema = vol.Schema({
-            vol.Required(
+        schema = probatio.Schema({
+            probatio.Required(
                 CONF_SONDE_PH,
                 default=entry.options.get(
                     CONF_SONDE_PH, entry.data.get(CONF_SONDE_PH, True)
                 ),
             ): bool,
-            vol.Required(
+            probatio.Required(
                 CONF_REGULATION_ORP,
                 default=entry.options.get(
                     CONF_REGULATION_ORP, entry.data.get(CONF_REGULATION_ORP, False)
                 ),
             ): bool,
-            vol.Required(
+            probatio.Required(
                 CONF_SCAN_INTERVAL,
                 default=entry.options.get(
                     CONF_SCAN_INTERVAL, entry.data.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
                 ),
-            ): vol.All(int, vol.Range(min=MIN_SCAN_INTERVAL)),
+            ): probatio.All(int, probatio.Range(min=MIN_SCAN_INTERVAL)),
         })
 
         return self.async_show_form(step_id="init", data_schema=schema)
