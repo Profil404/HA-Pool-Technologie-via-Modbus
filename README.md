@@ -160,11 +160,13 @@ L'interface s'affiche automatiquement dans la langue configurée sur votre insta
 
 Ce projet est né d'un travail de rétro-ingénierie du protocole Modbus de l'électrolyseur Pool Technologie, mené et documenté par [Profil404](https://github.com/Profil404) sur le [forum HACF](https://forum.hacf.fr/t/electrolyseur-pool-technologie-via-le-port-rs485-justsalt-ibaregul-duo/), avant de donner lieu à cette intégration Home Assistant.
 
-Plusieurs registres et fonctionnalités supplémentaires ont ensuite été identifiés et repris depuis d'autres forks et contributions de la communauté, notamment :
+Un grand merci à toutes celles et ceux qui ont contribué à ce projet :
 
-- [neopsyko](https://github.com/neopsyko/HA-Pool-Technologie-via-Modbus) — mode boost, synchronisation continue des consignes
-- [romain563](https://github.com/romain563/pooltechnologie) — option de configuration ORP
-- [pierrebaridon63](https://github.com/pierrebaridon63) — consigne électrolyse, courant/puissance cellule, réglage taille du bassin et ratios électrolyse/UV sur Poolsquad UV ([issue #8](../../issues/8), [issue #9](../../issues/9))
-- [nadlio](https://github.com/nadlio) — modèle Racer, tension/consigne électrolyse sur ce modèle ([issue #4](../../issues/4))
-- [Locodice67](https://github.com/Locodice67) — concentration correcteur pH, réglage taille du bassin, diagnostics cellule (heures de fonctionnement, heure d'inversion)
-- les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres) pour la découverte et la confirmation de nombreux registres et modèles compatibles
+- [neopsyko](https://github.com/neopsyko/HA-Pool-Technologie-via-Modbus)
+- [romain563](https://github.com/romain563/pooltechnologie)
+- [pierrebaridon63](https://github.com/pierrebaridon63)
+- [nadlio](https://github.com/nadlio)
+- [Locodice67](https://github.com/Locodice67)
+- [chpego](https://github.com/chpego)
+- [cedricrosse](https://github.com/cedricrosse)
+- les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres)
