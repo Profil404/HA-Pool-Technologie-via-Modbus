@@ -17,7 +17,8 @@
     },
     "error": {
       "cannot_connect": "No se pudo conectar al servidor Modbus TCP/IP",
-      "invalid_host": "Dirección IP no válida"
+      "invalid_host": "Dirección IP no válida",
+      "link_conflict": "Home Assistant ya utiliza esta pasarela con otros parámetros de enlace"
     },
     "abort": {
       "already_configured": "Este electrolizador ya está configurado"
