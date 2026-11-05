@@ -9,5 +9,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/Profil404/HA-Pool-Technologie-via-Modbus/issues",
   "requirements": ["modbus-connection[tmodbus]>=4.12.4"],
-  "version": "261102"
+  "version": "261105"
 }
