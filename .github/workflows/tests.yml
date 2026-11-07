@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v7"
+      - uses: "actions/setup-python@v7"
+        with:
+          # Celle de Home Assistant 2026.10.1, la version minimale de l'intégration.
+          python-version: "3.14"
+          cache: "pip"
+          cache-dependency-path: "requirements_test.txt"
+      - name: Installer les dépendances
+        run: pip install -r requirements_test.txt
+      - name: Pytest
+        run: pytest --cov
+      - name: Ruff (format)
+        run: ruff format --check .
+      - name: Ruff (lint)
+        run: ruff check .
+      - name: Mypy
+        run: mypy
