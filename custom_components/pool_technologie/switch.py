@@ -64,6 +64,12 @@ class BoostSwitch(PoolSwitch):
         self._attr_is_on = False
         self._attr_entity_registry_enabled_default = enabled_default
 
+    async def async_added_to_hass(self):
+        # L'état du boost lit aussi le drapeau (4182) : en pause, les minutes
+        # restantes (4188) sont gardées mais le drapeau retombe à 0.
+        self.async_on_remove(self.coordinator.async_add_field("boost_flag"))
+        await super().async_added_to_hass()
+
     @property
     def extra_state_attributes(self):
         device = self.coordinator.device
