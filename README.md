@@ -87,7 +87,7 @@ Lors de l'ajout de l'intégration, vous renseignez :
 - Le modèle de votre électrolyseur (voir la liste ci-dessous)
 - La présence ou non d'une sonde pH (masque les entités pH si absente)
 - La présence ou non d'une sonde ORP (masque les entités ORP si absente)
-- L'intervalle de rafraîchissement des données (en secondes)
+- L'intervalle de rafraîchissement des données (en secondes, 1 au minimum)
 
 L'assistant vérifie que l'électrolyseur répond avant de créer l'entrée : il doit donc être sous tension (pompe en marche) au moment de l'ajout.
 

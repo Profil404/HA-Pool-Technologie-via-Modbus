@@ -1,12 +1,24 @@
+import logging
+
 from homeassistant.components.modbus import async_get_unit
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, HomeAssistantError
 from modbus_connection import ModbusTcpParams
 
-from .const import CONF_HOST, CONF_PORT, CONF_SCAN_INTERVAL, CONF_UNIT_ID, DOMAIN, SCAN_INTERVAL
+from .const import (
+    CONF_HOST,
+    CONF_PORT,
+    CONF_SCAN_INTERVAL,
+    CONF_UNIT_ID,
+    DOMAIN,
+    MIN_SCAN_INTERVAL,
+    SCAN_INTERVAL,
+)
 from .coordinator import PoolTechnologieConfigEntry, PoolTechnologieCoordinator
 from .options_helper import get_option
 from .pool_technologie_modbus import PoolTechnologieDevice
+
+_LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = ["sensor", "number", "binary_sensor", "switch"]
 
@@ -27,6 +39,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: PoolTechnologieConfigEnt
         raise ConfigEntryNotReady(str(err)) from err
 
     scan_interval = get_option(entry, CONF_SCAN_INTERVAL, SCAN_INTERVAL)
+    # Enregistré avant que l'assistant ne le refuse : à 0, plus aucune lecture
+    # périodique ; en négatif, des lectures en continu.
+    if scan_interval < MIN_SCAN_INTERVAL:
+        _LOGGER.warning(
+            "Intervalle de rafraîchissement invalide (%s s), remplacé par %s s : "
+            "corrigez-le dans les options de l'intégration",
+            scan_interval,
+            SCAN_INTERVAL,
+        )
+        scan_interval = SCAN_INTERVAL
     coordinator = PoolTechnologieCoordinator(
         hass, entry, PoolTechnologieDevice(unit), scan_interval
     )

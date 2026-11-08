@@ -453,3 +453,29 @@ async def test_unusable_restored_switch_state_is_ignored(
     fake_modbus.fail(ModbusConnectionError("injoignable"))
     await setup(hass, config_entry)
     assert state(hass, PH_AUTO) == STATE_OFF
+
+
+@pytest.mark.parametrize("interval", [0, -1])
+async def test_invalid_saved_interval_falls_back_to_default(
+    hass: HomeAssistant,
+    fake_modbus: FakeModbus,
+    caplog: pytest.LogCaptureFixture,
+    interval: int,
+) -> None:
+    entry = MockConfigEntry(domain=DOMAIN, data=entry_data(scan_interval=interval))
+
+    await setup(hass, entry)
+
+    assert entry.runtime_data.update_interval == timedelta(seconds=60)
+    assert f"Intervalle de rafraîchissement invalide ({interval} s)" in caplog.text
+
+
+async def test_minimum_saved_interval_is_kept(
+    hass: HomeAssistant, fake_modbus: FakeModbus, caplog: pytest.LogCaptureFixture
+) -> None:
+    entry = MockConfigEntry(domain=DOMAIN, data=entry_data(scan_interval=1))
+
+    await setup(hass, entry)
+
+    assert entry.runtime_data.update_interval == timedelta(seconds=1)
+    assert "Intervalle de rafraîchissement invalide" not in caplog.text
