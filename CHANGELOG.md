@@ -1,5 +1,16 @@
-pool_technologie – Version à venir (numéro à définir par le mainteneur)
-	[Correctif] L'intervalle de rafraîchissement doit valoir au moins 1 seconde : à 0, l'électrolyseur n'était plus relu après la première lecture ; en négatif, il était interrogé en continu. Une valeur invalide déjà enregistrée est remplacée par 60 secondes, avec un avertissement dans le journal
+## pool_technologie – Version 261108
+
+### ⚠️ À savoir avant la mise à jour
+- **Heure inversion cellule** : cette entité n'est plus activée par défaut sur Poolsquad UV et Just Salt Pro. Sur certains électrolyseurs, l'appareil attend un autre format de valeur que celui envoyé par l'intégration : un réglage fait depuis Home Assistant pourrait être mal compris. **Ne modifiez pas ce réglage** tant que son fonctionnement n'est pas confirmé sur votre modèle. Si vous l'avez déjà, désactivez-la (les installations existantes la gardent). (#15)
+
+### 🐛 Correctifs
+- **Mode boost** : l'interrupteur affichait « activé » alors que le boost était en pause (minutes restantes gardées, drapeau retombé à 0). Il faut maintenant des minutes restantes (4188 > 0) **et** le drapeau levé (4182). Merci @boulaya66 et @chpego. (#15)
+- **Intervalle de rafraîchissement** : à 0, l'électrolyseur n'était plus relu après la première lecture ; en négatif, il était interrogé en continu. Le minimum est maintenant de 1 seconde, et une valeur invalide déjà enregistrée est remplacée par 60 secondes, avec un avertissement dans le journal. Merci @chpego. (#18)
+
+### 📘 Documentation
+- **README** : « Heure inversion cellule » passe à ❓ dans le tableau de compatibilité (Poolsquad UV, Just Salt Pro), et @boulaya66 rejoint les crédits.
+
+**Full Changelog**: https://github.com/Profil404/HA-Pool-Technologie-via-Modbus/compare/v261105...v261108
 
 pool_technologie – Version 261105
 	[Information] Home Assistant 2026.10.1 minimum requis

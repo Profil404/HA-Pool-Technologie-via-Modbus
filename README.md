@@ -64,7 +64,7 @@ Cette intégration permet de suivre et contrôler facilement les principaux para
 | Consigne ORP¹ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Consigne électrolyse | ❌ | ❓ | ✅ | ❓ | ✅ |
 | Réglage taille du bassin | ❓ | ❓ | ✅ | ✅ | ❓ |
-| Heure inversion cellule | ❌ | ❓ | ✅ | ✅ | ❓ |
+| Heure inversion cellule | ❌ | ❓ | ❓ | ❓ | ❓ |
 | Mode boost | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Régulation pH automatique² | ✅ | ✅ | ✅ | ✅ | ✅ |
 
@@ -169,4 +169,5 @@ Un grand merci à toutes celles et ceux qui ont contribué à ce projet :
 - [Locodice67](https://github.com/Locodice67)
 - [chpego](https://github.com/chpego)
 - [cedricrosse](https://github.com/cedricrosse)
+- [boulaya66](https://github.com/boulaya66)
 - les contributeurs du fil du forum HACF (Phil, Cyril44, jimbo7384 et d'autres)
