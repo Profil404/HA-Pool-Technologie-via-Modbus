@@ -21,7 +21,8 @@ NUMBERS = {
     "number.poolsquad_uv_electrolysis_setpoint": (35, 4168, 35, "35"),
     "number.poolsquad_uv_ph_corrector_concentration": (20, 4208, 20, "20.0"),
     "number.poolsquad_uv_pool_size_setpoint": (52, 4111, 52, "52"),
-    "number.poolsquad_uv_cell_inversion_time": (6, 4170, 6, "6"),
+    # L'heure d'inversion cellule (4170) n'est plus confirmée sur aucun modèle :
+    # créée désactivée, elle n'a pas d'état à écrire dans ce test.
 }
 
 

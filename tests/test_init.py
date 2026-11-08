@@ -322,6 +322,24 @@ async def test_out_of_range_keeps_last_value(
     assert state(hass, "sensor.poolsquad_uv_ph_setpoint") == "10.0"  # dans 0-14
 
 
+async def test_paused_boost_shows_as_off(
+    hass: HomeAssistant,
+    fake_modbus: FakeModbus,
+    config_entry: MockConfigEntry,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Boost en pause : minutes restantes gardées (4188), drapeau retombé (4182)."""
+    await setup(hass, config_entry)
+
+    fake_modbus.holding.update({4188: 1440, 4182: 256})
+    await next_cycle(hass, freezer)
+    assert state(hass, BOOST) == STATE_ON
+
+    fake_modbus.holding[4182] = 0
+    await next_cycle(hass, freezer)
+    assert state(hass, BOOST) == STATE_OFF
+
+
 async def test_disabled_entities_are_not_read(
     hass: HomeAssistant, fake_modbus: FakeModbus, freezer: FrozenDateTimeFactory
 ) -> None:
@@ -343,6 +361,7 @@ async def test_disabled_entities_are_not_read(
         (4208, 1),
         (4188, 1),
         (4200, 1),
+        (4182, 1),  # drapeau du boost, lu après l'ordre historique
     ]
 
 

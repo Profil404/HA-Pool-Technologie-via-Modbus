@@ -4,6 +4,9 @@
 la v261029 sous Home Assistant 2026.10.1 (pymodbus simulé), pour chaque modèle,
 avec la sonde pH déclarée, non déclarée ou absente de la configuration (entrées
 créées avant la v261001), et avec ou sans sonde ORP.
+
+Seule exception volontaire (v261108) : « Heure inversion cellule » est créée
+désactivée sur Poolsquad UV et Just Salt Pro, où elle n'est plus confirmée.
 """
 
 from __future__ import annotations
