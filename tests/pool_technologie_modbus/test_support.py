@@ -35,7 +35,7 @@ EXPECTED = {
     "ph_corrector_concentration": (C, C, C, C, C),
     "electrolysis_setpoint": (X, U, C, U, C),
     "pool_volume": (U, U, C, C, U),
-    "cell_inversion_interval": (X, U, C, C, U),
+    "cell_inversion_interval": (X, U, U, U, U),
     "boost_remaining": (C, C, C, C, C),
     "boost_flag": (C, C, C, C, C),
     "ph_regulation": (C, C, C, C, C),

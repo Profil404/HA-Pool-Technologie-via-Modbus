@@ -350,6 +350,36 @@ async def test_boost_off_leaves_the_flag(
     assert unit.holding[4182] == 256
 
 
+async def test_boost_active_needs_remaining_minutes_and_the_flag(
+    device: PoolTechnologieDevice, unit: MockModbusUnit
+) -> None:
+    device.select(["boost_remaining", "boost_flag"])
+
+    unit.holding.update({4188: 1440, 4182: 256})
+    await device.async_update()
+    assert device.boost_active is True
+
+    # Boost mis en pause : les minutes restantes sont gardées, le drapeau retombe.
+    unit.holding[4182] = 0
+    await device.async_update()
+    assert device.boost_active is False
+
+    # Boost terminé ou arrêté : plus de minutes restantes.
+    unit.holding.update({4188: 0, 4182: 0})
+    await device.async_update()
+    assert device.boost_active is False
+
+
+async def test_boost_active_without_the_flag_uses_remaining_minutes(
+    device: PoolTechnologieDevice, unit: MockModbusUnit
+) -> None:
+    # Tant que le drapeau n'est pas lu, seules les minutes restantes comptent.
+    device.select(["boost_remaining"])
+    unit.holding[4188] = 30
+    await device.async_update()
+    assert device.boost_active is True
+
+
 async def test_boost_not_confirmed(device: PoolTechnologieDevice, unit: MockModbusUnit) -> None:
     unit.on_write(lambda event: unit.holding.__setitem__(4188, 0))
     with pytest.raises(WriteNotConfirmedError):
