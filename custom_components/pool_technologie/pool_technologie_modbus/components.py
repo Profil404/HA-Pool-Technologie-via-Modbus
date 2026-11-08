@@ -74,8 +74,10 @@ class Controls(Component):
 
     # Minutes de boost restantes (0 = arrêté) : le registre qui commande le boost.
     boost_remaining = register(4188, unit="min", writable=True)
-    # Drapeau d'activation du boost (256), écrit à l'activation et jamais lu. Il
-    # retombe à 0 de lui-même quand 4188 revient à 0 (observé sur un Just Salt Pro).
+    # Drapeau d'activation du boost (256), écrit à l'activation. Il retombe à 0
+    # quand 4188 revient à 0 (observé sur un Just Salt Pro), mais aussi quand le
+    # boost est mis en pause alors que 4188 garde ses minutes restantes
+    # (observé sur un SERENE S4 DUO, issue #15) : l'état du boost lit les deux.
     boost_flag = register(4182, writable=True)
     ph_regulation = register(4200, writable=True)
 

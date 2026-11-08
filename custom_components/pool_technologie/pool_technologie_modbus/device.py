@@ -97,9 +97,20 @@ class PoolTechnologieDevice(Device):
 
     @property
     def boost_active(self) -> bool | None:
-        """Si le mode boost est en cours (minutes restantes > 0)."""
+        """Si le mode boost est en cours.
+
+        Il faut des minutes restantes (4188 > 0) et le drapeau levé (4182, bit
+        256) : en pause, les minutes restantes sont gardées mais le drapeau
+        retombe à 0. Tant que le drapeau n'a pas été lu, seules les minutes
+        restantes comptent.
+        """
         remaining = self._values.get("boost_remaining")
-        return None if remaining is None else remaining > 0
+        if remaining is None:
+            return None
+        if remaining <= 0:
+            return False
+        flag = self._values.get("boost_flag")
+        return True if flag is None else bool(int(flag) & BOOST_FLAG_ON)
 
     @property
     def ph_regulation_active(self) -> bool | None:

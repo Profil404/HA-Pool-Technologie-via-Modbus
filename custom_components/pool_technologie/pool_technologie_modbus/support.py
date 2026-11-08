@@ -43,7 +43,8 @@ class Support(Enum):
 
 ALL_MODELS = frozenset(Model)
 
-# Diagnostics cellule (heures de fonctionnement 4463, inversion 4170).
+# Diagnostics cellule (heures de fonctionnement 4463 ; l'inversion 4170 a son
+# propre statut plus bas).
 # L'iBasel Duo est exclu : l'iBaRegul (boîtier de régulation) ne remonte pas ces
 # données depuis l'iBaSel (boîtier séparé qui pilote la cellule).
 _CELL_DIAGNOSTICS_CONFIRMED = frozenset({Model.POOLSQUAD_UV, Model.JUST_SALT_PRO})
@@ -73,7 +74,10 @@ _CONFIRMED: dict[str, frozenset[Model]] = {
     "electrolysis_ratio": frozenset({Model.POOLSQUAD_UV}),
     "uv_ratio": frozenset({Model.POOLSQUAD_UV}),
     "operating_hours": _CELL_DIAGNOSTICS_CONFIRMED,
-    "cell_inversion_interval": _CELL_DIAGNOSTICS_CONFIRMED,
+    # Non confirmé : sur plusieurs modèles (SERENE S4 DUO, WaterAir, Premium Pro),
+    # la valeur brute est les heures × 256, alors que l'intégration lit et écrit
+    # les heures directement (issue #15). Aucun modèle n'est confirmé pour l'instant.
+    "cell_inversion_interval": frozenset(),
     # Poolsquad UV (Pierre_Brdn) et Racer (nadlio, issue #4).
     "electrolysis_setpoint": frozenset({Model.POOLSQUAD_UV, Model.RACER}),
     # Just Salt Pro (Locodice67, PR #5) et Poolsquad UV en écriture

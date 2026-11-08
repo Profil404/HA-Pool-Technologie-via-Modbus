@@ -52,7 +52,7 @@ await connection.close()
 | | `ph_corrector_concentration` | 4208 | % | 5 – 50 | oui |
 | | `pool_volume` | 4111 | m³ | 1 – 250 | oui |
 | `Controls` | `boost_remaining` | 4188 | min | — | oui |
-| | `boost_flag` | 4182 | — | — | oui, jamais lu |
+| | `boost_flag` | 4182 | — | — | oui |
 | | `ph_regulation` | 4200 | — | — | oui |
 | `Cell` | `cell_voltage` | 1061 | mV | 0 – 30000 | |
 | | `cell_current` | 1062 | mA | 0 – 50000 | |
@@ -66,7 +66,7 @@ Tous les registres sont des holding registers 16 bits **non signés** (FC03 en l
 
 `ReportedSetpoints` et `Setpoints` décrivent les mêmes registres sous deux angles : la valeur rapportée avec ses bornes physiques, et le réglage avec ses bornes de réglage. Choisis ensemble, ils ne coûtent qu'une requête par adresse.
 
-Le mode boost s'active en écrivant la durée (1440 min) puis le drapeau (256), et s'arrête en remettant la durée à 0 : le drapeau retombe alors à 0 de lui-même (observé sur un Just Salt Pro). Seule la durée est relue.
+Le mode boost s'active en écrivant la durée (1440 min) puis le drapeau (256), et s'arrête en remettant la durée à 0 : le drapeau retombe alors à 0 de lui-même (observé sur un Just Salt Pro). Seule la durée est relue après une écriture. L'état du boost (`boost_active`) exige des minutes restantes **et** le drapeau levé : en pause (drapeau à 0), les minutes restantes sont gardées (observé sur un SERENE S4 DUO, issue #15). Tant que le drapeau n'est pas lu, seules les minutes comptent.
 
 ## Statut par modèle
 
