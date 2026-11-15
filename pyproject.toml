@@ -18,8 +18,8 @@ target-version = "py313"
 line-length = 100
 
 [tool.ruff.format]
-# Gardé dans le style du dépôt (schémas « vol.Schema({ »), pour ne pas
-# reformater le flux d'options, inchangé.
+# Gardé dans le style du dépôt (schémas « probatio.Schema({ »), pour ne pas
+# reformater le flux d'options.
 exclude = ["custom_components/pool_technologie/config_flow.py"]
 
 [tool.ruff.lint]
