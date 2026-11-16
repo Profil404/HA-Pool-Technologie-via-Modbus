@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from homeassistant.components.sensor import async_update_suggested_units
 from homeassistant.const import ATTR_UNIT_OF_MEASUREMENT, UnitOfPower, UnitOfTemperature
 from homeassistant.core import HomeAssistant, State
 from homeassistant.helpers import entity_registry as er
@@ -65,19 +66,39 @@ async def test_units_chosen_by_user_are_converted(
     assert (value, unit) == (pytest.approx(0.016), UnitOfPower.KILO_WATT)
 
 
-async def test_imperial_system_keeps_celsius(
+async def test_imperial_system_shows_fahrenheit(
     hass: HomeAssistant, fake_modbus: FakeModbus, config_entry: MockConfigEntry
 ) -> None:
-    """En système impérial, la température reste en °C, comme avant.
+    """En système impérial, la température s'affiche d'office en °F.
 
-    La classe d'appareil est déclarée en texte ("temperature") : Home Assistant
-    ne lui applique pas sa conversion automatique vers l'unité du système.
+    Home Assistant ne l'applique qu'à la classe d'appareil
+    SensorDeviceClass.TEMPERATURE, pas au texte "temperature" d'avant.
+    La puissance n'a pas d'unité propre au système : elle reste en W.
     """
     hass.config.units = US_CUSTOMARY_SYSTEM
     await setup(hass, config_entry)
 
     value, unit = value_and_unit(hass, TEMPERATURE)
+    assert (value, unit) == (pytest.approx(76.1), UnitOfTemperature.FAHRENHEIT)
+    value, unit = value_and_unit(hass, POWER)
+    assert (value, unit) == (pytest.approx(16), UnitOfPower.WATT)
+
+
+async def test_switch_to_imperial_system(
+    hass: HomeAssistant, fake_modbus: FakeModbus, config_entry: MockConfigEntry
+) -> None:
+    """Passage du système métrique à l'impérial, sans redémarrage."""
+    await setup(hass, config_entry)
+    value, unit = value_and_unit(hass, TEMPERATURE)
     assert (value, unit) == (pytest.approx(24.5), UnitOfTemperature.CELSIUS)
+
+    # Ce que fait la page Paramètres > Système > Général.
+    await hass.config.async_update(unit_system="us_customary")
+    async_update_suggested_units(hass)
+    await hass.async_block_till_done()
+
+    value, unit = value_and_unit(hass, TEMPERATURE)
+    assert (value, unit) == (pytest.approx(76.1), UnitOfTemperature.FAHRENHEIT)
 
 
 async def test_device_off_restores_native_value(
@@ -112,3 +133,36 @@ async def test_device_off_restores_state_saved_before_fix(
 
     value, unit = value_and_unit(hass, TEMPERATURE)
     assert (value, unit) == (pytest.approx(71.6), UnitOfTemperature.FAHRENHEIT)
+
+
+async def test_existing_install_keeps_its_unit(
+    hass: HomeAssistant, fake_modbus: FakeModbus, config_entry: MockConfigEntry
+) -> None:
+    """Installation existante en impérial : la mise à jour ne change pas l'unité.
+
+    Home Assistant garde l'unité déjà enregistrée (°C), jusqu'à ce que
+    l'utilisateur choisisse °F sur l'entité ou réenregistre son système d'unités
+    en demandant la mise à jour des unités.
+    """
+    hass.config.units = US_CUSTOMARY_SYSTEM
+    config_entry.add_to_hass(hass)
+    registry = er.async_get(hass)
+    # L'entrée telle que la laisse la 261108 : unité °C, sans option.
+    registry.async_get_or_create(
+        "sensor",
+        DOMAIN,
+        "temperature_eau",
+        config_entry=config_entry,
+        suggested_object_id="poolsquad_uv_water_temperature",
+        original_device_class="temperature",
+        unit_of_measurement=UnitOfTemperature.CELSIUS,
+    )
+    await setup(hass, config_entry)
+    value, unit = value_and_unit(hass, TEMPERATURE)
+    assert (value, unit) == (pytest.approx(24.5), UnitOfTemperature.CELSIUS)
+
+    await hass.config.async_update(unit_system="us_customary")
+    async_update_suggested_units(hass)
+    await hass.async_block_till_done()
+    value, unit = value_and_unit(hass, TEMPERATURE)
+    assert (value, unit) == (pytest.approx(76.1), UnitOfTemperature.FAHRENHEIT)

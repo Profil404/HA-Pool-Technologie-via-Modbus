@@ -10,6 +10,8 @@
 # Le même principe s'applique aux réglages modifiables (number) et aux
 # interrupteurs (switch).
 
+from homeassistant.components.sensor import SensorDeviceClass
+
 from .pool_technologie_modbus import MODEL_NAMES, Support, support
 
 MODELS = {model.value: {"name": name} for model, name in MODEL_NAMES.items()}
@@ -36,7 +38,7 @@ SENSORS = [
         "unique_id": "temperature_eau",
         "field": "water_temperature",
         "icon": "mdi:thermometer-water",
-        "device_class": "temperature",
+        "device_class": SensorDeviceClass.TEMPERATURE,
     },
     {
         "translation_key": "taux_sel",
@@ -81,7 +83,7 @@ SENSORS = [
         "unique_id": "puissance_cellule",
         "field": "cell_power",
         "icon": "mdi:flash",
-        "device_class": "power",
+        "device_class": SensorDeviceClass.POWER,
         "entity_category": "diagnostic",
     },
     {
