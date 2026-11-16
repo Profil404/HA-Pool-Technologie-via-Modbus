@@ -1,7 +1,6 @@
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import RestoreSensor
 from homeassistant.const import EntityCategory
 from homeassistant.core import callback
-from homeassistant.helpers.restore_state import RestoreEntity
 
 from .entity import PoolTechnologieEntity
 from .models import SENSORS, PH_SENSOR_KEYS, ORP_SENSOR_KEYS, entity_status
@@ -30,10 +29,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(sensors)
 
 
-class PoolSensor(PoolTechnologieEntity, SensorEntity, RestoreEntity):
+class PoolSensor(PoolTechnologieEntity, RestoreSensor):
     def __init__(self, coordinator, config, enabled_default=True):
         super().__init__(coordinator, config["field"])
-        self._state = None
 
         self._attr_translation_key = config["translation_key"]
         self._attr_icon = config.get("icon", "mdi:water")
@@ -48,17 +46,18 @@ class PoolSensor(PoolTechnologieEntity, SensorEntity, RestoreEntity):
         if config.get("entity_category") == "diagnostic":
             self._attr_entity_category = EntityCategory.DIAGNOSTIC
 
-    # L'état publié est la valeur lue telle quelle, comme avant la migration.
-    @property  # type: ignore[misc]
-    def state(self):
-        return self._state
-
     async def async_added_to_hass(self):
         await super().async_added_to_hass()
-        last_state = await self.async_get_last_state()
-        if last_state and self._state is None:
+        # Appareil éteint au démarrage : on affiche la dernière valeur connue,
+        # dans l'unité de l'appareil, jusqu'à la première lecture réussie.
+        if (last := await self.async_get_last_sensor_data()) is not None:
+            self._attr_native_value = last.native_value
+        # Jusqu'à la 261108, l'état publié était toujours la valeur lue, dans
+        # l'unité de l'appareil, même quand Home Assistant affichait une autre
+        # unité : il se restaure donc tel quel, quelle que soit l'unité notée.
+        elif (last_state := await self.async_get_last_state()) is not None:
             try:
-                self._state = float(last_state.state)
+                self._attr_native_value = float(last_state.state)
             except ValueError:
                 pass
 
@@ -67,5 +66,5 @@ class PoolSensor(PoolTechnologieEntity, SensorEntity, RestoreEntity):
         # Lecture hors plage ou en échec : on garde la dernière valeur connue
         # plutôt que d'afficher n'importe quoi.
         if (value := self._value) is not None:
-            self._state = value
+            self._attr_native_value = value
         super()._handle_coordinator_update()

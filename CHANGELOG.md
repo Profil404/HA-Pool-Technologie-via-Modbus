@@ -1,3 +1,8 @@
+## pool_technologie – Version à venir (numéro à définir par le mainteneur)
+
+### 🐛 Correctifs
+- **Température de l'eau et puissance cellule dans une autre unité** : en choisissant °F (ou kW) dans les réglages de l'entité, la valeur n'était pas convertie : 24,5 °C s'affichait « 24,5 °F ». Elle l'est maintenant. L'historique enregistré avant la mise à jour garde les anciennes valeurs. Merci @chpego.
+
 ## pool_technologie – Version 261108
 
 ### ⚠️ À savoir avant la mise à jour
